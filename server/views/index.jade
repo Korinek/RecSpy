@@ -1,11 +1,5 @@
-doctype
-html
-  head
-    title RecSpy
-    link(rel="stylesheet" href="/css/site.css")
-    link(rel="stylesheet" href="/vendor/bootstrap/dist/css/bootstrap.css")
-  body(ng-app='')
-  | Hello World From Jade
-  div
-    h1 Some h1 tag
-  include(../includes/scripts)
+extends ../includes/layout
+
+block main-content
+  section.content
+    div(ng-view)
