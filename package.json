@@ -17,7 +17,10 @@
   },
   "homepage": "https://github.com/Korinek/RecSpy",
   "devDependencies": {
-    "gulp": "^3.8.11"
+    "chai": "^2.0.0",
+    "gulp": "^3.8.11",
+    "mocha": "^2.1.0",
+    "sinon": "^1.12.2"
   },
   "dependencies": {
     "body-parser": "^1.11.0",
