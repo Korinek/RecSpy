@@ -5,10 +5,10 @@ var config = require('./config/config')[env];
 
 require('./config/express')(app, config);
 
-/*require('./server/config/mongoose')(config);
+require('./config/mongoose')(config);
 
-require('./server/config/passport')();
-*/
+//require('./config/passport')();
+
 require('./config/routes')(app);
 
 app.listen(config.port);

@@ -3,7 +3,7 @@ var rootPath = path.normalize(__dirname + '/../../');
 
 module.exports = {
   development: {
-    //db: 'mongodb://localhost/recspy',
+    db: 'mongodb://localhost/recspy',
     rootPath: rootPath,
     port: process.env.PORT || 3030
   },
