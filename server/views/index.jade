@@ -1,5 +1,11 @@
-extends ../includes/layout
-
-block main-content
-  section.content
-    div(ng-view)
+doctype
+html
+    head
+        title RecSpy
+        link(rel="stylesheet", type="text/css" href="/vendor/bootstrap/dist/css/bootstrap.css")
+        link(rel="stylesheet", type="text/css", href="/vendor/toastr/toastr.css")
+        link(rel="stylesheet", type="text/css", href="/css/site.css")
+    body(ng-app='app')
+        block main-content
+            div(ng-view)
+        include ../includes/scripts
