@@ -7,7 +7,7 @@
         $routeProvider
             .when('/',
             {
-                templateUrl: '/partials/main',
+                templateUrl: '/partials/main/main',
                 controller: 'mainController',
                 controllerAs: 'vm'
             })
