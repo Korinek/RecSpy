@@ -4,7 +4,7 @@
   "description": "\"A gym management and usage statistics tool.\"",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --recursive -R spec test/server-tests/ && karma start"
   },
   "repository": {
     "type": "git",

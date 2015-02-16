@@ -20,7 +20,7 @@ module.exports = function (config) {
             'public/vendor/angular-mocks/angular-mocks.js',
             'public/vendor/angular-route/angular-route.js',
             'public/app/**/*.js',
-            'test/tests/**/*.js'
+            'test/client-tests/**/*.js'
         ],
 
 
@@ -64,6 +64,6 @@ module.exports = function (config) {
 
         // Continuous Integration mode
         // if true, Karma captures browsers, runs the tests and exits
-        singleRun: false
+        singleRun: true
     });
 };
