@@ -10,7 +10,8 @@
                 templateUrl: '/partials/main',
                 controller: 'mainController',
                 controllerAs: 'vm'
-            });
+            })
+            .otherwise({redirectTo: '/'});
     });
 }());
 
