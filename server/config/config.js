@@ -9,7 +9,7 @@ module.exports = {
     },
     production: {
         rootPath: rootPath,
-        db: 'mongodb://dev:Ruxevas589188@ds045511.mongolab.com:45511/recspy',
+        db: 'mongodb://' + process.env.MONGO_USER + ':' + process.env.MONGO_PW +'@ds045511.mongolab.com:45511/recspy',
         port: process.env.PORT || 80
     }
 }
