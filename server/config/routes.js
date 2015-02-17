@@ -3,6 +3,7 @@ module.exports = function (app) {
         res.render('../../public/app/' + req.params[0]);
     });
 
+
     app.get('*', function (req, res) {
         res.render('index');
     });
