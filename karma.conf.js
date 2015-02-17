@@ -23,10 +23,8 @@ module.exports = function (config) {
             'test/client-tests/**/*.js'
         ],
 
-
         // list of files to exclude
-        exclude: [
-        ],
+        exclude: [],
 
 
         // preprocess matching files before serving them to the browser
