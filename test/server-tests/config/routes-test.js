@@ -3,7 +3,7 @@ var should = require('chai').should(),
     express = require('express'),
     app = express();
 
-require('../../server/config/routes')(app);
+require('../../../server/config/routes')(app);
 app.set('views', './server/views');
 app.set('view engine', 'jade');
 
