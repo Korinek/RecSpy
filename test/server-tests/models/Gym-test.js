@@ -14,9 +14,9 @@ describe('Gym Model', function () {
     });
 
     beforeEach(function (done) {
-       Gym.remove({}, function () {
-           done();
-       });
+        Gym.remove({}, function () {
+            done();
+        });
     });
 
     it('should be able to create', function (done) {
@@ -31,7 +31,7 @@ describe('Gym Model', function () {
                 phone: 123456789
             })
         }, function (err) {
-            if(err) throw err;
+            if (err) throw err;
             done();
         });
     });

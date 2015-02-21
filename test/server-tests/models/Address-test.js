@@ -27,7 +27,7 @@ describe('Address Model', function () {
             streetAddress: '2027 Some Street',
             phone: 123456789
         }, function (err) {
-            if(err) throw err;
+            if (err) throw err;
             done();
         });
     });
