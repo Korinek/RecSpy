@@ -1,3 +1,8 @@
-/**
- * Created by haddonkorinek on 2/18/15.
- */
+var mongoose = require('mongoose');
+
+var gymSchema = mongoose.Schema({
+    name: {type: String, required: true},
+    address: {type: mongoose.Schema.Types.ObjectId, ref:'Address', required: true, unique: true}
+});
+
+module.exports = mongoose.model('Gym', gymSchema);

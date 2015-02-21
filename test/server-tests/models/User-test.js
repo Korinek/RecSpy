@@ -1,10 +1,8 @@
 var mongoose = require('mongoose'),
-    expect = require('chai').expect;
-User = require('../../../server/models/User');
+    expect = require('chai').expect,
+    User = require('../../../server/models/User');
 
-mongoose.connect('mongodb://localhost/test');
-
-describe('User', function () {
+describe('User Model', function () {
 
     var createDefaultUser = function (done) {
         User.create(
@@ -28,6 +26,14 @@ describe('User', function () {
     var isPropertyRequired = function (propertyName) {
         return getProperty(propertyName).isRequired;
     };
+
+    before(function () {
+        mongoose.connect('mongodb://localhost/test');
+    });
+
+    after(function () {
+        mongoose.connection.close();
+    });
 
     beforeEach(function (done) {
         createDefaultUser(done);
