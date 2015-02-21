@@ -1,9 +1,7 @@
 var expect = require('chai').expect,
     mongoose = require('mongoose'),
+    Address = require('../../../server/models/Address'),
     Gym = require('../../../server/models/Gym');
-
-var Address = require('../../../server/models/Address');
-
 
 describe('Gym Model', function () {
 
@@ -32,7 +30,7 @@ describe('Gym Model', function () {
                 streetAddress: '2027 Some Street',
                 phone: 123456789
             })
-        }, function (err, gym) {
+        }, function (err) {
             if(err) throw err;
             done();
         });

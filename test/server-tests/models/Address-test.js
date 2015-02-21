@@ -18,7 +18,7 @@ describe('Address Model', function () {
         });
     });
 
-    it('should be able to create', function () {
+    it('should be able to create', function (done) {
         Address.create({
             country: 'United States',
             stateRegionOrProvince: 'Kansas',
@@ -26,6 +26,9 @@ describe('Address Model', function () {
             city: 'Some City',
             streetAddress: '2027 Some Street',
             phone: 123456789
+        }, function (err) {
+            if(err) throw err;
+            done();
         });
     });
 
