@@ -15,14 +15,6 @@ var arrayObjectHasProperty = function (arr, propertyName, propertyValue) {
 
 describe('Express Configurations', function () {
 
-    it('should set views path based on config', function () {
-        app.settings['views'].should.equals('fooRootPath/server/views');
-    });
-
-    it('should set view engine to jade', function () {
-        app.settings['view engine'].should.equal('jade');
-    });
-
     it('should use stylus', function () {
         arrayObjectHasProperty(app._router.stack, 'name', 'stylus');
     });
