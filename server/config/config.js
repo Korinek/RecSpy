@@ -12,4 +12,4 @@ module.exports = {
         db: process.env.MONGO_PROD,
         port: process.env.PORT || 80
     }
-}
+};
