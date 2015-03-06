@@ -120,7 +120,7 @@ function serve(isDev) {
         delayTime: 1,
         env: {
             'PORT': port,
-            'NODE_ENV': isDev ? 'development' : 'build'
+            'NODE_ENV': isDev ? 'dev' : 'build'
         },
         watch: [config.server]
     };
