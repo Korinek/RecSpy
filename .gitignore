@@ -1,8 +1,15 @@
+.DS_Store
+
+# vim
+*.swp
+
 # build folder
 /build
+/build/*
 
 # temp folder
 /.temp
+/.temp/*
 
 # Visual Paradigm
 *.vpp~*
