@@ -16,19 +16,7 @@
     <!-- endbuild -->
 </head>
 <body ng-app='app'>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="/">RecSpy</a>
-            </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li><a href="/">Home</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
+    <navbar-directive/>
     <ng-view></ng-view>
 
     <div class="footer container text-center">
@@ -49,7 +37,9 @@
 <!-- build:js js/app.js -->
 <!-- inject:js -->
 <script src="/client/app/app.js"></script>
+<script src="/client/app/account/loginController.js"></script>
 <script src="/client/app/main/mainController.js"></script>
+<script src="/client/app/navbar/navbarDirective.js"></script>
 <!-- endinject -->
 
 <!-- inject:templates:js -->

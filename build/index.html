@@ -7,7 +7,12 @@
     <link rel="stylesheet" href="styles/app.css">
 </head>
 <body ng-app='app'>
-<ng-view></ng-view>
+    <navbar-directive/>
+    <ng-view></ng-view>
+
+    <div class="footer container text-center">
+        Created by Haddon Korinek
+    </div>
 
 <script src="js/lib.js"></script>
 
