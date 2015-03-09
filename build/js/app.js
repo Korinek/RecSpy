@@ -18,6 +18,7 @@
     'use strict';
 
     angular.module('app').controller('loginController', function () {
+        console.log('Creating LoginController');
         var vm = this;
     });
 }());
@@ -25,9 +26,11 @@
 (function () {
     'use strict';
 
-    angular.module('app').directive('login-directive', function () {
+    angular.module('app').directive('loginDirective', function () {
         return {
-            templateUrl: '/app/account/loginDirective.html'
+            templateUrl: '/app/account/loginTemplate.html',
+            controller: 'loginController',
+            controllerAs: 'vm'
         };
     });
 }());
@@ -36,10 +39,12 @@
     'use strict';
 
     angular.module('app').controller('mainController', function () {
+        console.log('Creating MainController');
         var vm = this;
         vm.myVar = 'Hello from main controller';
     });
 }());
+
 (function () {
     'use strict';
 

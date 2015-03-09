@@ -3,7 +3,9 @@
 
     angular.module('app').directive('loginDirective', function () {
         return {
-            templateUrl: '/app/account/loginTemplate.html'
+            templateUrl: '/app/account/loginTemplate.html',
+            controller: 'loginController',
+            controllerAs: 'vm'
         };
     });
 }());
