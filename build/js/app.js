@@ -22,4 +22,4 @@
         vm.myVar = 'Hello from main controller';
     });
 }());
-angular.module("app").run(["$templateCache", function($templateCache) {$templateCache.put("app/main/main.html","<h1>Now Displaying The Main Controller</h1>\n<h2> {{ vm.myVar}} </h2>");}]);
+angular.module("app").run(["$templateCache", function($templateCache) {$templateCache.put("app/main/main.html","<h1>Now Displaying The Main Controller</h1><h2>{{ vm.myVar}}</h2>");}]);

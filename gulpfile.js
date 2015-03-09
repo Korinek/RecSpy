@@ -52,7 +52,7 @@ gulp.task('templatecache', ['clean-code'], function () {
 
     return gulp
         .src(config.htmltemplates)
-        //.pipe($.minifyHtml({empty: true}))
+        .pipe($.minifyHtml({empty: true}))
         .pipe($.angularTemplatecache(
             config.templateCache.file,
             config.templateCache.options
@@ -83,8 +83,11 @@ gulp.task('inject', ['wiredep', 'styles', 'templatecache'], function () {
 
 gulp.task('optimize', ['inject'], function () {
     log('Optimizing the javascript, css, and html');
+
     var assets = $.useref.assets({searchPath: './'});
     var templateCache = config.temp + config.templateCache.file;
+    var cssFilter = $.filter('**/*.css');
+    var jsFilter = $.filter('**.*.js');
 
     return gulp
         .src(config.index)
@@ -93,9 +96,19 @@ gulp.task('optimize', ['inject'], function () {
             starttag: '<!-- inject:templates:js -->'
         }))
         .pipe(assets)
+	.pipe(cssFilter)
+	.pipe($.csso())
+	.pipe(cssFilter.restore())
+	.pipe(jsFilter)
+	.pipe($.uglify())
+	.pipe(jsFilter.restore())
         .pipe(assets.restore())
         .pipe($.useref())
         .pipe(gulp.dest(config.build));
+});
+
+gulp.task('build', ['optimize'], function () {
+    log('Building everything');
 });
 
 gulp.task('serve-build', ['optimize'], function () {
@@ -172,7 +185,7 @@ function startBrowserSync(isDev) {
 
     var options = {
         proxy: 'localhost:' + port,
-        port: 3000,
+        port: 3030,
         files: isDev ? [
             config.client + '**/*.*',
             '!' + config.stylus,

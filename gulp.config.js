@@ -23,9 +23,17 @@ module.exports = function () {
             clientApp + 'app.js',
             clientApp + '**/*.js'
         ],
+        server: './server',
         stylus: client + 'styles/site.styl',
         temp: temp,
-        server: './server',
+
+        /*
+         * Optimized files
+         * */
+        optimized: {
+            app: 'app.js',
+            lib: 'lib.js'
+        },
 
         /*
          * Template cache
