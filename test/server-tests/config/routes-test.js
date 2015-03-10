@@ -3,7 +3,7 @@ var should = require('chai').should(),
     express = require('express'),
     app = express();
 
-require('../../../server/config/routes')(app);
+//require('../../../server/config/routes')(app);
 
 describe('Routing', function () {
     /*it('Default route should be defined', function (done) {
