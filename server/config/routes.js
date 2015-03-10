@@ -1,4 +1,6 @@
-var express = require('express');
+var express = require('express'),
+    auth = require('./auth'),
+    usersController = require('../controllers/usersController');
 
 module.exports = function (app, config) {
     if (process.env.NODE_ENV === 'build') {
@@ -13,4 +15,17 @@ module.exports = function (app, config) {
         app.use(express.static('./'));
         app.use(express.static('./temp'));
     }
+
+    app.post('/api/users', usersController.createUser);
+
+    app.post('/login', auth.authenticate);
+
+    app.post('/logout', function (req, res) {
+        req.logout();
+        res.end();
+    });
+
+    app.all('/api/*', function (req, res) {
+        res.send(404);
+    });
 };

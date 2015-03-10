@@ -11,6 +11,12 @@
                 controller: 'mainController',
                 controllerAs: 'vm'
             })
+            .when('/signup',
+            {
+                templateUrl: 'app/account/signup.html',
+                controller: 'signupController',
+                controllerAs: 'vm'
+            })
             .otherwise({redirectTo: '/'});
     });
 }());
