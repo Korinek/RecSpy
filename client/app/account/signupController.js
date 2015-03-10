@@ -4,13 +4,11 @@
             var vm = this;
             vm.signup = function () {
                 var newUserData = {
-                    username: vm.email,
+                    username: vm.username,
                     password: vm.password,
                     firstName: vm.firstName,
                     lastName: vm.lastName
                 };
-
-                console.log(newUserData);
 
                 authService.createUser(newUserData)
                     .then(function () {
