@@ -11,16 +11,21 @@
                 controller: 'mainController',
                 controllerAs: 'vm'
             })
+            .when('/signup',
+            {
+                templateUrl: 'app/account/signup.html',
+                controller: 'signupController',
+                controllerAs: 'vm'
+            })
             .otherwise({redirectTo: '/'});
     });
 }());
+
 (function () {
     'use strict';
 
     angular.module('app').factory('User', function ($resource) {
-        var UserResource = $resource('/api/users/:id', {_id: "@id"}, {
-            update: {method: 'PUT', isArray:false}
-        });
+        var UserResource = $resource('/api/users/:id', {_id: "@id"});
 
         return UserResource;
     });
@@ -64,11 +69,11 @@
 
             logoutUser: function () {
                 var deferred = $q.defer();
-                $http.post('/logout', {logout:true})
-                     .then(function () {
-                        identityService.currentUser = undefined;
-                        deferred.resolve();
-                     });
+                $http.post('/logout', {logout:true}).then(function () {
+                    identityService.currentUser = undefined;
+                    deferred.resolve();
+                });
+                return deferred.promise;
             }
         };
     });
@@ -101,7 +106,7 @@
                 } else {
                     notifierService.failure('Username/Password combination incorrect');
                 }
-                vm.username = "";
+                vm.password = "";
             });
         };
 
@@ -132,13 +137,15 @@
     angular.module('app').controller('signupController',
         function (User, notifierService, $location, authService) {
             var vm = this;
-            vm.signup = funciton () {
+            vm.signup = function () {
                 var newUserData = {
                     username: vm.email,
                     password: vm.password,
                     firstName: vm.firstName,
                     lastName: vm.lastName
                 };
+
+                console.log(newUserData);
 
                 authService.createUser(newUserData)
                     .then(function () {
@@ -147,7 +154,8 @@
                     }, function (reason) {
                         notifierService.error(reason);
                     }); 
-        });
+        }
+    });
 }());
 
 (function () {
@@ -186,7 +194,7 @@
     });
 }());
 
-angular.module("app").run(["$templateCache", function($templateCache) {$templateCache.put("app/account/loginTemplate.html","<div class=navbar-right><form class=navbar-form ng-hide=vm.identity.isAuthenticated()><ul class=\"nav navbar-nav\"><li><a href=/signup>Sign Up</a></li></ul><div class=form-group><input class=form-control placeholder=Email ng-model=vm.username )=\"\"></div><div class=form-group><input class=form-control type=password placeholder=Password ng-model=vm.password></div><button class=\"btn btn-primary\" ng-click=\"vm.signin(username, password)\">Sign In</button></form><ul ng-show=vm.identity.isAuthenticated() class=\"nav navbar-nav navbar-right\"><li class=dropdown><a class=dropdown-toggle href data-toggle=dropdown>{{vm.identity.currentUser.firstName + \" \" + identity.currentUser.lastName}} <b class=caret></b></a><ul><li><a href ng-click=vm.signout()>Sign Out</a></li></ul></li></ul></div>");
-$templateCache.put("app/account/signup.html","");
+angular.module("app").run(["$templateCache", function($templateCache) {$templateCache.put("app/account/loginTemplate.html","<div class=navbar-right><ul class=\"nav navbar-nav\"><li><a href=/signup>Sign Up</a></li></ul><form class=navbar-form ng-hide=vm.identity.isAuthenticated()><div class=form-group><input class=form-control placeholder=Username ng-model=vm.username )=\"\"></div><div class=form-group><input class=form-control type=password placeholder=Password ng-model=vm.password></div><div class=form-group><button class=\"btn btn-primary\" ng-click=\"vm.signin(vm.username, vm.password)\">Sign In</button></div></form><ul ng-show=vm.identity.isAuthenticated() class=\"nav navbar-nav navbar-right\"><li class=dropdown><a class=dropdown-toggle href data-toggle=dropdown>{{vm.identity.currentUser.firstName + \" \" + identity.currentUser.lastName}} <b class=caret></b></a><ul><li><a href ng-click=vm.signout()>Sign Out</a></li></ul></li></ul></div>");
+$templateCache.put("app/account/signup.html","<div class=container><div class=well><form name=signupForm class=form-horizontal><fieldset><legend>New User Information</legend><div class=form-group><label for=username class=\"col-md-2 control-label\">Username</label><div class=\"col-md=10\"><input name=username type=email placeholder=Username ng-model=vm.username required class=form-control></div></div><div class=form-group><label for=password class=\"col-md-2 control-label\">Password</label><div class=\"col-md=10\"><input name=password type=password placeholder=Password ng-model=vm.password required class=form-control></div></div><div class=form-group><label for=firstName class=\"col-md-2 control-label\">First name</label><div class=\"col-md=10\"><input name=firstName type=text placeholder=\"First Name\" ng-model=vm.firstName required class=form-control></div></div><div class=form-group><label for=lastName class=\"col-md-2 control-label\">Last Name</label><div class=\"col-md=10\"><input name=lastName type=lastName placeholder=\"Last Name\" ng-model=vm.lastName required class=form-control></div></div><div class=form-grou><div class=\"col-md-10 col-md-offset-2\"><div class=pull-right><button ng-click=vm.signup() ng-disabled=signupForm.$invalid class=\"btn btn-primary\">Submit</button> &nbsp;<a href=\"/\" class=\"btn btn-default\">Cancel</a></div></div></div></fieldset></form></div></div>");
 $templateCache.put("app/main/main.html","<h1>Now Displaying The Main Controller</h1><h2>{{ vm.myVar}}</h2>");
 $templateCache.put("app/navbar/navbarTemplate.html","<div class=\"navbar navbar-inverse navbar-fixed-top\"><div class=container><div class=navbar-header><a class=navbar-brand href=\"/\">RecSpy</a></div><div class=\"navbar-collapse collapse\"><ul class=\"nav navbar-nav\"><li><a href=\"/\">Home</a></li></ul><login-directive></login-directive></div></div></div>");}]);
