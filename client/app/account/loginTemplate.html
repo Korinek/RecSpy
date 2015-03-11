@@ -1,11 +1,12 @@
 <div class="nav navbar-nav navbar-right" ng-hide="vm.identity.isAuthenticated()">
-    <li><a href="/signup">Sign Up</a></li>
+    <li><a href="/signup">Sign Up</a>
+    </li>
 </div>
 
 <div class="navbar-right">
     <form class="navbar-form" ng-hide="vm.identity.isAuthenticated()">
         <div class="form-group">
-            <input class="form-control" placeholder="Username" ng-model="vm.username")></input>
+            <input class="form-control" placeholder="Username" ng-model="vm.username" )></input>
         </div>
         <div class="form-group">
             <input class="form-control" type="password" placeholder="Password" ng-model="vm.password"></input>
@@ -14,15 +15,14 @@
     </form>
     <ul ng-show="vm.identity.isAuthenticated()" class="nav navbar-nav navbar-right">
         <li class="dropdown">
-        <a class="dropdown-toggle" href="" data-toggle="dropdown">
-            {{vm.identity.currentUser.firstName + " " + identity.currentUser.lastName}}
-            <b class="caret"></b>
-        </a>
-        <ul>
-            <li>
-            <a href="" ng-click="vm.signout()">Sign Out</a> 
-            </li>
-        </ul> 
+            <a class="dropdown-toggle" href="" data-toggle="dropdown">
+                {{vm.identity.currentUser.firstName + " " + identity.currentUser.lastName}}
+                <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                <li><a href="" ng-click="vm.signout()">Sign Out</a>
+                </li>
+            </ul>
         </li>
     </ul>
 </div>

@@ -1,8 +1,8 @@
-(function () {
+(function() {
     angular.module('app').controller('signupController',
-        function (User, notifierService, $location, authService) {
+        function(User, notifierService, $location, authService) {
             var vm = this;
-            vm.signup = function () {
+            vm.signup = function() {
                 var newUserData = {
                     username: vm.username,
                     password: vm.password,
@@ -11,12 +11,12 @@
                 };
 
                 authService.createUser(newUserData)
-                    .then(function () {
+                    .then(function() {
                         notifierService.success('User account created!');
                         $location.path('/');
-                    }, function (reason) {
+                    }, function(reason) {
                         notifierService.error(reason);
-                    }); 
-        }
-    });
+                    });
+            };
+        });
 }());

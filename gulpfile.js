@@ -3,38 +3,44 @@ var args = require('yargs').argv;
 var config = require('./gulp.config')();
 var del = require('del');
 var browserSync = require('browser-sync');
-var $ = require('gulp-load-plugins')({lazy: true});
+var $ = require('gulp-load-plugins')({
+    lazy: true
+});
 var port = process.env.PORT || config.defaultPort;
 
 gulp.task('help', $.taskListing);
 gulp.task('default', ['help']);
 
-gulp.task('vet', function () {
+gulp.task('vet', function() {
     return gulp.src(config.alljs)
         .pipe($.if(args.verbose, $.print()))
         .pipe($.jscs())
         .pipe($.jshint())
-        .pipe($.jshint.reporter('jshint-stylish', {verbose: true}))
+        .pipe($.jshint.reporter('jshint-stylish', {
+            verbose: true
+        }))
         .pipe($.jshint.reporter('fail'));
 });
 
-gulp.task('styles', ['clean-styles'], function () {
+gulp.task('styles', ['clean-styles'], function() {
     log('Compiling Stylus --> CSS');
 
     return gulp
         .src(config.stylus)
         .pipe($.plumber())
         .pipe($.stylus())
-        .pipe($.autoprefixer({browsers: ['last 2 version', '> 5%']}))
+        .pipe($.autoprefixer({
+            browsers: ['last 2 version', '> 5%']
+        }))
         .pipe(gulp.dest(config.temp));
 });
 
-gulp.task('clean-styles', function (done) {
+gulp.task('clean-styles', function(done) {
     var files = config.temp + '**/*.css';
     clean(files, done);
 });
 
-gulp.task('clean-code', function (done) {
+gulp.task('clean-code', function(done) {
     var files = [].concat(
         config.temp + '**/*.js',
         config.build + '**/*.html',
@@ -43,16 +49,18 @@ gulp.task('clean-code', function (done) {
     clean(files, done);
 });
 
-gulp.task('stylus-watcher', function () {
+gulp.task('stylus-watcher', function() {
     gulp.watch([config.stylus], ['styles']);
 });
 
-gulp.task('templatecache', ['clean-code'], function () {
+gulp.task('templatecache', ['clean-code'], function() {
     log('Creating AngularJS $templateCache');
 
     return gulp
         .src(config.htmltemplates)
-        .pipe($.minifyHtml({empty: true}))
+        .pipe($.minifyHtml({
+            empty: true
+        }))
         .pipe($.angularTemplatecache(
             config.templateCache.file,
             config.templateCache.options
@@ -60,7 +68,7 @@ gulp.task('templatecache', ['clean-code'], function () {
         .pipe(gulp.dest(config.temp));
 });
 
-gulp.task('wiredep', function () {
+gulp.task('wiredep', function() {
     log('Wiring up bower css, js, and our app js into the jade');
     var options = config.getWiredepDefaultOptions();
     var wiredep = require('wiredep').stream;
@@ -72,7 +80,7 @@ gulp.task('wiredep', function () {
         .pipe(gulp.dest(config.client));
 });
 
-gulp.task('inject', ['wiredep', 'styles', 'templatecache'], function () {
+gulp.task('inject', ['wiredep', 'styles', 'templatecache'], function() {
     log('Wire up the app css into the html, and call wiredep');
 
     return gulp
@@ -81,10 +89,12 @@ gulp.task('inject', ['wiredep', 'styles', 'templatecache'], function () {
         .pipe(gulp.dest(config.client));
 });
 
-gulp.task('optimize', ['inject'], function () {
+gulp.task('optimize', ['inject', 'vet'], function() {
     log('Optimizing the javascript, css, and html');
 
-    var assets = $.useref.assets({searchPath: './'});
+    var assets = $.useref.assets({
+        searchPath: './'
+    });
     var templateCache = config.temp + config.templateCache.file;
     var cssFilter = $.filter('**/*.css');
     var jsFilter = $.filter('**.*.js');
@@ -92,34 +102,36 @@ gulp.task('optimize', ['inject'], function () {
     return gulp
         .src(config.index)
         .pipe($.plumber())
-        .pipe($.inject(gulp.src(templateCache, {read: false}), {
+        .pipe($.inject(gulp.src(templateCache, {
+            read: false
+        }), {
             starttag: '<!-- inject:templates:js -->'
         }))
         .pipe(assets)
-	.pipe(cssFilter)
-	.pipe($.csso())
-	.pipe(cssFilter.restore())
-	.pipe(jsFilter)
-	.pipe($.uglify())
-	.pipe(jsFilter.restore())
+        .pipe(cssFilter)
+        .pipe($.csso())
+        .pipe(cssFilter.restore())
+        .pipe(jsFilter)
+        .pipe($.uglify())
+        .pipe(jsFilter.restore())
         .pipe(assets.restore())
         .pipe($.useref())
         .pipe(gulp.dest(config.build));
 });
 
-gulp.task('build', ['optimize'], function () {
+gulp.task('build', ['optimize'], function() {
     log('Building everything');
 });
 
-gulp.task('serve-build', ['optimize'], function () {
+gulp.task('serve-build', ['optimize'], function() {
     serve(false);
 });
 
-gulp.task('serve-dev', ['inject'], function () {
+gulp.task('serve-dev', ['inject'], function() {
     serve(true);
 });
 
-gulp.task('clean', function (done) {
+gulp.task('clean', function(done) {
     var delConfig = [].concat(config.build, config.temp);
     log('Cleaning: ' + $.util.colors.blue(delConfig));
     del(delConfig, done);
@@ -139,22 +151,24 @@ function serve(isDev) {
     };
 
     return $.nodemon(nodeOptions)
-        .on('restart', ['vet'], function (ev) {
+        .on('restart', ['vet'], function(ev) {
             log('*** nodemon restarted ***');
             log('files changed on restart:\n' + ev);
-            setTimeout(function () {
+            setTimeout(function() {
                 browserSync.notify('reloading now ...');
-                browserSync.reload({stream: false});
+                browserSync.reload({
+                    stream: false
+                });
             }, config.browserReloadDelay);
         })
-        .on('start', function () {
+        .on('start', function() {
             log('*** nodemon started ***');
             startBrowserSync(isDev);
         })
-        .on('crash', function () {
+        .on('crash', function() {
             log('*** nodemon crashed ***');
         })
-        .on('exit', function () {
+        .on('exit', function() {
             log('*** nodemon exited cleanly ***');
         });
 }
@@ -173,12 +187,12 @@ function startBrowserSync(isDev) {
 
     if (isDev) {
         gulp.watch([config.stylus], ['styles'])
-            .on('change', function (event) {
+            .on('change', function(event) {
                 changeEvent(event);
             });
     } else {
         gulp.watch([config.stylus, config.js, config.html], ['optimize', browserSync.reload])
-            .on('change', function (event) {
+            .on('change', function(event) {
                 changeEvent(event);
             });
     }
