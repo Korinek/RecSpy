@@ -13,10 +13,10 @@ module.exports = function (app, config) {
     app.use(bodyParser.json());
     app.use(session({
         secret: process.env.SESSION_SECRET || 'RecSpy Session Secret',
-        name: process.env.SESSION_NAME || 'RecSpy Session NAME',
+        name: 'RecSpy Session'i,
+        maxAge: new Date(Date.now() + 60000 * 5), // 5 minutes
         resave: true,
         saveUninitialized: true
-
     }));
     app.use(passport.initialize());
     app.use(passport.session());
