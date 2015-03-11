@@ -13,7 +13,7 @@ module.exports = function (app, config) {
     app.use(bodyParser.json());
     app.use(session({
         secret: process.env.SESSION_SECRET || 'RecSpy Session Secret',
-        name: 'RecSpy Session'i,
+        name: 'RecSpy Session',
         maxAge: new Date(Date.now() + 60000 * 5), // 5 minutes
         resave: true,
         saveUninitialized: true
