@@ -3,7 +3,6 @@ var User = require('mongoose').model('User'),
 
 exports.createUser = function(req, res, next) {
     var userData = req.body;
-    console.log(userData);
     userData.username = userData.username.toLowerCase();
     userData.salt = encrypt.createSalt();
     userData.hashedPassword = encrypt.hashPassword(userData.salt, userData.password);
