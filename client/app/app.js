@@ -38,6 +38,11 @@
                 controller: 'employmentController',
                 controllerAs: 'vm'
             })
+            .when('/ownership', {
+                templateUrl: 'app/ownership/ownership.html',
+                controller: 'ownershipController',
+                controllerAs: 'vm'
+            })
             .otherwise({
                 redirectTo: '/'
             });
