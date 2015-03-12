@@ -14,7 +14,9 @@ module.exports = function (app, config) {
     app.use(session({
         secret: process.env.SESSION_SECRET || 'RecSpy Session Secret',
         name: 'RecSpy Session',
-        maxAge: new Date(Date.now() + 60000 * 5), // 5 minutes
+        cookie: {
+            maxAge: new Date(Date.now() + 1000 * 10)
+        },
         resave: true,
         saveUninitialized: true
     }));

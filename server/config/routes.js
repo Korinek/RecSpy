@@ -1,6 +1,7 @@
 var express = require('express'),
     auth = require('./auth'),
-    usersController = require('../controllers/usersController');
+    usersController = require('../controllers/usersController'),
+    dashboardController = require('../controllers/dashboardController');
 
 module.exports = function(app, config) {
     if (process.env.NODE_ENV === 'build') {
@@ -19,8 +20,10 @@ module.exports = function(app, config) {
     app.post('/api/users', usersController.createUser);
 
     app.post('/login', auth.authenticate);
-
-    app.post('/fooAuthenticate', auth.authenticate);
+    app.get('/dashboard', auth.requiresApiLogin, dashboardController.getGymStatistics);
+    app.get('/employment', auth.authenticate);
+    app.get('/ownership', auth.authenticate);
+    app.get('/memberships', auth.authenticate);
 
     app.post('/logout', function(req, res) {
         req.logout();

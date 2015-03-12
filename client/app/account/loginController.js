@@ -3,13 +3,16 @@
 
     var LoginController = function(identityService, notifierService, authService, $location) {
         var vm = this;
+        vm.password = '';
+        vm.username = '';
+
         vm.identity = identityService;
         vm.signin = function(username, password) {
             authService.authenticateUser(username, password).then(function(success) {
                 if (success) {
                     notifierService.success('You have successfully signed in!');
                 } else {
-                    notifierService.failure('Username/Password combination incorrect');
+                    notifierService.error('Username/Password combination incorrect');
                 }
                 vm.password = '';
             });

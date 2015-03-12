@@ -10,7 +10,7 @@
                 success: function(message) {
                     toastr.success(message);
                 },
-                failure: function(message) {
+                error: function(message) {
                     toastr.error(message);
                 }
             };
