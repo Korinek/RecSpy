@@ -1,22 +1,30 @@
-(function () {
+(function() {
     'use strict';
 
     angular.module('app', ['ngResource', 'ngRoute']);
-    angular.module('app').config(function ($routeProvider, $locationProvider) {
-        $locationProvider.html5Mode({enabled: true, requireBase: false});
+    angular.module('app').config(function($routeProvider, $locationProvider) {
+        $locationProvider.html5Mode({
+            enabled: true,
+            requireBase: false
+        });
         $routeProvider
-            .when('/',
-            {
+            .when('/', {
                 templateUrl: '/app/main/main.html',
                 controller: 'mainController',
                 controllerAs: 'vm'
             })
-            .when('/signup',
-            {
+            .when('/signup', {
                 templateUrl: 'app/account/signup.html',
                 controller: 'signupController',
                 controllerAs: 'vm'
             })
-            .otherwise({redirectTo: '/'});
+            .when('/dashboard', {
+                templateUrl: 'app/dashboard/dashboard.html',
+                controller: 'dashboardController',
+                controllerAs: 'vm'
+            })
+            .otherwise({
+                redirectTo: '/'
+            });
     });
 }());
