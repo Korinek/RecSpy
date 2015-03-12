@@ -1,6 +1,10 @@
 (function() {
-    angular.module('app').controller('ownershipController',
-        function() {
-            var vm = this;
-        });
+    'use strict';
+
+    var OwnershipController = function() {
+        var vm = this;
+    };
+
+    OwnershipController.$inject = [];
+    angular.module('app').controller('OwnershipController', OwnershipController);
 }());

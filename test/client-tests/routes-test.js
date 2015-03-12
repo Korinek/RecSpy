@@ -8,7 +8,7 @@ describe('router', function () {
     }));
 
     it('should map home route to main controller', function () {
-       route.routes['/'].controller.should.equal('mainController');
+       route.routes['/'].controller.should.equal('MainController');
     });
 
     it('should map invalid routes to home route', function () {

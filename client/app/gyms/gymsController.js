@@ -1,6 +1,10 @@
 (function() {
-    angular.module('app').controller('gymsController',
-        function() {
-            var vm = this;
-        });
+    'use strict';
+
+    var GymsController = function() {
+        var vm = this;
+    };
+
+    GymsController.$inject = [];
+    angular.module('app').controller('GymsController', GymsController);
 }());

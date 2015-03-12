@@ -1,6 +1,10 @@
 (function() {
-    angular.module('app').controller('employmentController',
-        function() {
-            var vm = this;
-        });
+    'use strict';
+
+    var EmploymentController = function() {
+        var vm = this;
+    };
+
+    EmploymentController.$inject = [];
+    angular.module('app').controller('EmploymentController', EmploymentController);
 }());

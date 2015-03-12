@@ -1,6 +1,10 @@
 (function() {
-    angular.module('app').controller('dashboardController',
-        function() {
-            var vm = this;
-        });
+    'use strict';
+
+    var DashboardController = function() {
+        var vm = this;
+    };
+
+    DashboardController.$inject = [];
+    angular.module('app').controller('DashboardController', DashboardController);
 }());

@@ -1,8 +1,11 @@
-(function () {
+(function() {
     'use strict';
 
-    angular.module('app').controller('mainController', function () {
+    var MainController = function() {
         var vm = this;
-        vm.myVar = 'Hello from main controller';
-    });
+        vm.myVar = 'Hello From Main Controller';
+    };
+
+    MainController.$inject = [];
+    angular.module('app').controller('MainController', MainController);
 }());

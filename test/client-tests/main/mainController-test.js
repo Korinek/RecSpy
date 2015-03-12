@@ -1,14 +1,14 @@
-describe('mainController', function(){
+describe('MainController', function(){
     var controller;
 
     beforeEach(module('app'));
 
     beforeEach(inject(function(_$controller_){
-        controller = _$controller_('mainController', {$scope: {}});
+        controller = _$controller_('MainController', {$scope: {}});
     }));
 
 
     it('should set myVar', function(){
-        controller.myVar.should.equal('Hello from main controller');
+        controller.myVar.should.equal('Hello From Main Controller');
     });
 });

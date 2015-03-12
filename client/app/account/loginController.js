@@ -1,8 +1,7 @@
 (function() {
     'use strict';
 
-    angular.module('app').controller('loginController', function(identityService,
-        notifierService, authService, $location) {
+    var LoginController = function(identityService, notifierService, authService, $location) {
         var vm = this;
         vm.identity = identityService;
         vm.signin = function(username, password) {
@@ -24,5 +23,7 @@
                 $location.path('/');
             });
         };
-    });
+    };
+    LoginController.$inject = ['identityService', 'notifierService', 'authService', '$location'];
+    angular.module('app').controller('LoginController', LoginController);
 }());
