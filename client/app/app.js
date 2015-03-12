@@ -28,6 +28,11 @@
                 controller: 'gymsController',
                 controllerAs: 'vm'
             })
+            .when('/memberships', {
+                templateUrl: 'app/memberships/memberships.html',
+                controller: 'membershipsController',
+                controllerAs: 'vm'
+            })
             .otherwise({
                 redirectTo: '/'
             });
