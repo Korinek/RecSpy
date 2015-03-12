@@ -5,7 +5,7 @@
         return {
             getGymStatistics: function() {
                 var deferred = $q.defer();
-                $http.get('/dashboard').then(function(response) {
+                $http.get('/api/dashboard').then(function(response) {
                     deferred.resolve(true);
                 }, function(error) {
                     console.log(error);

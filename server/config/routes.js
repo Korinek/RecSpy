@@ -1,7 +1,10 @@
 var express = require('express'),
     auth = require('./auth'),
     usersController = require('../controllers/usersController'),
-    dashboardController = require('../controllers/dashboardController');
+    dashboardController = require('../controllers/dashboardController'),
+    employmentController = require('../controllers/employmentController'),
+    ownershipController = require('../controllers/ownershipController'),
+    membershipController = require('../controllers/membershipController');
 
 module.exports = function(app, config) {
     if (process.env.NODE_ENV === 'build') {
@@ -18,17 +21,14 @@ module.exports = function(app, config) {
     }
 
     app.post('/api/users', usersController.createUser);
+    app.post('/api/login', auth.authenticate);
 
-    app.post('/login', auth.authenticate);
-    app.get('/dashboard', auth.requiresApiLogin, dashboardController.getGymStatistics);
-    app.get('/employment', auth.authenticate);
-    app.get('/ownership', auth.authenticate);
-    app.get('/memberships', auth.authenticate);
+    app.get('/api/dashboard', auth.requiresLogin, dashboardController.getGymStatistics);
+    app.get('/api/employment', auth.requiresLogin, employmentController.getEmployment);
+    app.get('/api/ownership', auth.requiresLogin, ownershipController.getOwnership);
+    app.get('/api/memberships', auth.requiresLogin, membershipController.getMemberships);
 
     app.post('/logout', function(req, res) {
-        console.log('Attempting to logout');
-        console.log(req.cookies);
-        console.log(req.user);
         req.logout();
         res.end();
     });

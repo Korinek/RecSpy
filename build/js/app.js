@@ -71,7 +71,7 @@
         return {
             authenticateUser: function(username, password) {
                 var deferred = $q.defer();
-                $http.post('/login', {
+                $http.post('/api/login', {
                         username: username,
                         password: password
                     })
@@ -272,7 +272,7 @@
         return {
             getGymStatistics: function() {
                 var deferred = $q.defer();
-                $http.get('/dashboard').then(function(response) {
+                $http.get('/api/dashboard').then(function(response) {
                     deferred.resolve(true);
                 }, function(error) {
                     console.log(error);

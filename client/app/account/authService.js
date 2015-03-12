@@ -5,7 +5,7 @@
         return {
             authenticateUser: function(username, password) {
                 var deferred = $q.defer();
-                $http.post('/login', {
+                $http.post('/api/login', {
                         username: username,
                         password: password
                     })

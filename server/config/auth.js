@@ -31,11 +31,7 @@ exports.authenticate = function(req, res, next) {
     auth(req, res, next);
 };
 
-exports.requiresApiLogin = function(req, res, next) {
-    console.log('Requires Api Login');
-    console.log(req.user);
-    console.log(req.cookie);
-    console.log('End Requires Api Login');
+exports.requiresLogin = function(req, res, next) {
     if (!req.isAuthenticated()) {
         res.status(403);
         res.end();
