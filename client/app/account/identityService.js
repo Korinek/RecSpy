@@ -7,9 +7,6 @@
                 currentUser: undefined,
                 isAuthenticated: function() {
                     return !!this.currentUser;
-                },
-                reset: function() {
-                    this.currentUser = undefined;
                 }
             };
         }

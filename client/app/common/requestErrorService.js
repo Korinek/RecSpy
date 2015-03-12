@@ -1,16 +1,17 @@
 (function() {
     'use strict';
 
-    var requestErrorService = function(notifierService, identityService, $location) {
+    var requestErrorService = function(notifierService, authService, $location) {
         return {
             handleSessionExpired: function() {
-                notifierService.error('Your session has expired');
-                identityService.reset();
-                $location.path('/');
+                authService.logoutUser().then(function() {
+                    notifierService.error('Your session has expired');
+                    $location.path('/');
+                });
             }
         };
     };
 
     angular.module('app').factory('requestErrorService',
-        ['notifierService', 'identityService', '$location', requestErrorService]);
+        ['notifierService', 'authService', '$location', requestErrorService]);
 }());

@@ -26,6 +26,9 @@ module.exports = function(app, config) {
     app.get('/memberships', auth.authenticate);
 
     app.post('/logout', function(req, res) {
+        console.log('Attempting to logout');
+        console.log(req.cookies);
+        console.log(req.user);
         req.logout();
         res.end();
     });
