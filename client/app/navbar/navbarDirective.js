@@ -1,9 +1,14 @@
 (function () {
     'use strict';
 
-    angular.module('app').directive('navbarDirective', function () {
+    angular.module('app').directive('navbarDirective', function (identityService) {
         return {
-            templateUrl: '/app/navbar/navbarTemplate.html'
+            restrict: 'E',
+            templateUrl: '/app/navbar/navbarTemplate.html',
+            scope: {},
+            link: function(scope, element) {
+                scope.identity = identityService;
+            }
         };
     });
 }());
