@@ -9,7 +9,6 @@ exports.createUser = function(req, res, next) {
 
     User.create(userData, function(err, user) {
         if (err) {
-            console.log(err);
             if (err.toString().indexOf('E11000') > -1) {
                 err = new Error('Duplicate Username');
             }
