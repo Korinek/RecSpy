@@ -1,1 +1,6 @@
-<div>Hello From Ownership Controller</div>
+<div ng-show="!vm.gym" class="container">
+   You do not currently own a gym. 
+</div>
+<div ng-show="vm.gym" class="container">
+    You currently own a gym: {{vm.gym}}
+</div>
