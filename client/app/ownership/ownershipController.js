@@ -3,10 +3,12 @@
 
     var OwnershipController = function(ownershipService) {
         var vm = this;
-        ownershipService.getOwnedGym(function(gym) {
-            console.log('success');
-            console.log(gym);
-        }, function(error) {});
+        ownershipService.getOwnedGym().then(function(success, gym) {
+            if(success) {
+                console.log('getOwnedGym success');
+                console.log(gym);
+            }
+        });
     };
 
     OwnershipController.$inject = ['ownershipService'];

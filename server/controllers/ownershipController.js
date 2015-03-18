@@ -1,3 +1,16 @@
+var Gym = require('mongoose').model('Gym');
+
 exports.getOwnership = function(req, res, next) {
-    res.send('/api/ownership success!');
+    Gym.findOne({
+        owner: req.user
+    }, function(err, gym) {
+        if (err) {
+            res.status(400);
+            res.send({
+                reason: err.toString()
+            });
+        } else {
+            res.send(gym);
+        }
+    });
 };
