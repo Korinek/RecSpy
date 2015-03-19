@@ -8,7 +8,7 @@ var gymSchema = mongoose.Schema({
     address: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Address',
-        required: true,
+        required: false,
         unique: true
     },
     owner: {

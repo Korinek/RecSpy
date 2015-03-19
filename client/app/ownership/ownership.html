@@ -1,5 +1,26 @@
 <div ng-show="!vm.gym" class="container">
-   You do not currently own a gym. 
+    You do not currently own a gym.
+
+    <div class="well">
+        <form name="createGymForm" class="form-horizontal">
+            <legend>New Gym Information</legend>
+            <div class="form-group">
+                <label for="gymName" class="col-md-2 control-label">Gym Name</label>
+                <div class="col-md-10">
+                    <input name="gymName" type="text" placeholder="Gym Name" ng-model="vm.gymName"
+                    required="required" class="form-control" />
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-10 col-md-offset-2">
+                    <div class="pull-right">
+                        <button ng-click="vm.createGym()" ng-disabled="createGymForm.$invalid" class="btn btn-primary">Create</button>
+                        &nbsp;<a href="/" class="btn btn-default">Cancel</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
 </div>
 <div ng-show="vm.gym" class="container">
     You currently own a gym: {{vm.gym}}

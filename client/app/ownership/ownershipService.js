@@ -6,11 +6,46 @@
             getOwnedGym: function() {
                 var deferred = $q.defer();
                 $http.get('/api/ownership').then(function(response) {
-                    deferred.resolve(true, response.data);
+                    console.log('---getOwnedGym---');
+                    console.log(response);
+                    console.log('-----------------');
+                    deferred.resolve({
+                        success: true,
+                        gym: response.data
+                    });
                 }, function(error) {
                     console.log(error);
-                    deferred.resolve(false);
+                    deferred.resolve({
+                        success: false,
+                        error: response.data
+                    });
                 });
+                return deferred.promise;
+            },
+            createGym: function(gymName) {
+                var deferred = $q.defer();
+                $http.post('/api/ownership', {
+                        gymName: gymName
+                    })
+                    .then(function(response) {
+                        console.log('---createGym---');
+                        console.log(response.data);
+                        console.log('---------------');
+
+                        deferred.resolve({
+                            success: true,
+                            gym: response.data
+                        });
+                    }, function(error) {
+                        console.log('---createGym---');
+                        console.log(error);
+                        console.log('---------------');
+                        deferred.resolve({
+                            success: false,
+                            error: error.data.reason
+                        });
+                    });
+
                 return deferred.promise;
             }
         };

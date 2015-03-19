@@ -14,3 +14,23 @@ exports.getOwnership = function(req, res, next) {
         }
     });
 };
+
+exports.createOwnership = function(req, res, next) {
+    var gymData = req.body;
+    gymData.owner = req.user;
+    gymData.name = gymData.gymName;
+    Gym.create(gymData, function(err, gym) {
+        if (err) {
+            console.log(err);
+            if (err.toString().indexOf('E11000') > -1) {
+                err = new Error('Duplicate Gym Name');
+            }
+
+            res.status(400);
+            return res.send({
+                reason: err.toString()
+            });
+        }
+        res.send(gym);
+    });
+};

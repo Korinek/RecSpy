@@ -22,6 +22,7 @@ module.exports = function(app, config) {
 
     app.post('/api/users', usersController.createUser);
     app.post('/api/login', auth.authenticate);
+    app.post('/api/ownership', auth.requiresLogin, ownershipController.createOwnership);
 
     app.get('/api/dashboard', auth.requiresLogin, dashboardController.getGymStatistics);
     app.get('/api/employment', auth.requiresLogin, employmentController.getEmployment);
@@ -34,6 +35,6 @@ module.exports = function(app, config) {
     });
 
     app.all('/api/*', function(req, res) {
-        res.send(404);
+        res.sendStatus(404);
     });
 };
