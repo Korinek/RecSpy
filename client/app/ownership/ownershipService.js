@@ -17,7 +17,7 @@
                     console.log(error);
                     deferred.resolve({
                         success: false,
-                        error: response.data
+                        error: error.data
                     });
                 });
                 return deferred.promise;

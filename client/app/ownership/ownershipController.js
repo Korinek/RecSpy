@@ -14,10 +14,9 @@
         vm.createGym = function() {
             ownershipService.createGym(vm.gymName).then(function(response) {
                 if (response.success) {
-                    notifierService.success('Successfully created the ' + response.gym.name + ' gym!');
                     vm.gym = response.gym;
                 } else {
-                    notifierService.error(reponse.error);
+                    notifierService.error(response.error);
                 }
             });
         };

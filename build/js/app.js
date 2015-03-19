@@ -351,19 +351,28 @@
 (function() {
     'use strict';
 
-    var OwnershipController = function(ownershipService, requestErrorService) {
+    var OwnershipController = function(ownershipService, requestErrorService, notifierService) {
         var vm = this;
-        ownershipService.getOwnedGym().then(function(success, gym) {
-            if (success) {
-                console.log(gym);
-                vm.gym = gym;
+        ownershipService.getOwnedGym().then(function(response) {
+            if (response.success) {
+                vm.gym = response.gym;
             } else {
                 requestErrorService.handleSessionExpired();
             }
         });
+
+        vm.createGym = function() {
+            ownershipService.createGym(vm.gymName).then(function(response) {
+                if (response.success) {
+                    vm.gym = response.gym;
+                } else {
+                    notifierService.error(response.error);
+                }
+            });
+        };
     };
 
-    OwnershipController.$inject = ['ownershipService', 'requestErrorService'];
+    OwnershipController.$inject = ['ownershipService', 'requestErrorService', 'notifierService'];
     angular.module('app').controller('OwnershipController', OwnershipController);
 }());
 
@@ -375,11 +384,46 @@
             getOwnedGym: function() {
                 var deferred = $q.defer();
                 $http.get('/api/ownership').then(function(response) {
-                    deferred.resolve(true, response.data);
+                    console.log('---getOwnedGym---');
+                    console.log(response);
+                    console.log('-----------------');
+                    deferred.resolve({
+                        success: true,
+                        gym: response.data
+                    });
                 }, function(error) {
                     console.log(error);
-                    deferred.resolve(false);
+                    deferred.resolve({
+                        success: false,
+                        error: error.data
+                    });
                 });
+                return deferred.promise;
+            },
+            createGym: function(gymName) {
+                var deferred = $q.defer();
+                $http.post('/api/ownership', {
+                        gymName: gymName
+                    })
+                    .then(function(response) {
+                        console.log('---createGym---');
+                        console.log(response.data);
+                        console.log('---------------');
+
+                        deferred.resolve({
+                            success: true,
+                            gym: response.data
+                        });
+                    }, function(error) {
+                        console.log('---createGym---');
+                        console.log(error);
+                        console.log('---------------');
+                        deferred.resolve({
+                            success: false,
+                            error: error.data.reason
+                        });
+                    });
+
                 return deferred.promise;
             }
         };
@@ -389,11 +433,11 @@
 }());
 
 angular.module("app").run(["$templateCache", function($templateCache) {$templateCache.put("app/account/loginTemplate.html","<div class=\"nav navbar-nav navbar-right\" ng-hide=vm.identity.isAuthenticated()><li><a href=/signup>Sign Up</a></li></div><div class=navbar-right><form class=navbar-form ng-hide=vm.identity.isAuthenticated()><div class=form-group><input class=form-control placeholder=Username ng-model=vm.username )=\"\"></div><div class=form-group><input class=form-control type=password placeholder=Password ng-model=vm.password></div><button class=\"btn btn-primary\" ng-click=\"vm.signin(vm.username, vm.password)\">Sign In</button></form><ul ng-show=vm.identity.isAuthenticated() class=\"nav navbar-nav navbar-right\"><li class=dropdown><a class=dropdown-toggle href data-toggle=dropdown>{{vm.identity.currentUser.firstName + \" \" + identity.currentUser.lastName}} <b class=caret></b></a><ul class=dropdown-menu><li><a href=/memberships>Memberships</a></li><li><a href=/employment>Employment</a></li><li><a href=/ownership>Ownership</a></li><li><a href ng-click=vm.signout()>Sign Out</a></li></ul></li></ul></div>");
-$templateCache.put("app/account/signup.html","<div class=container><div class=\"well foo\"><form name=signupForm class=form-horizontal><fieldset><legend>New User Information</legend><div class=form-group><label for=username class=\"col-md-2 control-label\">Username</label><div class=col-md-10><input name=username type=text placeholder=Username ng-model=vm.username required class=form-control></div></div><div class=form-group><label for=password class=\"col-md-2 control-label\">Password</label><div class=col-md-10><input name=password type=password placeholder=Password ng-model=vm.password required class=form-control></div></div><div class=form-group><label for=firstName class=\"col-md-2 control-label\">First name</label><div class=col-md-10><input name=firstName type=text placeholder=\"First Name\" ng-model=vm.firstName required class=form-control></div></div><div class=form-group><label for=lastName class=\"col-md-2 control-label\">Last Name</label><div class=col-md-10><input name=lastName type=lastName placeholder=\"Last Name\" ng-model=vm.lastName required class=form-control></div></div><div class=form-grou><div class=\"col-md-10 col-md-offset-2\"><div class=pull-right><button ng-click=vm.signup() ng-disabled=signupForm.$invalid class=\"btn btn-primary\">Submit</button> &nbsp;<a href=\"/\" class=\"btn btn-default\">Cancel</a></div></div></div></fieldset></form></div></div>");
+$templateCache.put("app/account/signup.html","<div class=container><div class=\"well foo\"><form name=signupForm class=form-horizontal><fieldset><legend>New User Information</legend><div class=form-group><label for=username class=\"col-md-2 control-label\">Username</label><div class=col-md-10><input name=username type=text placeholder=Username ng-model=vm.username required class=form-control></div></div><div class=form-group><label for=password class=\"col-md-2 control-label\">Password</label><div class=col-md-10><input name=password type=password placeholder=Password ng-model=vm.password required class=form-control></div></div><div class=form-group><label for=firstName class=\"col-md-2 control-label\">First name</label><div class=col-md-10><input name=firstName type=text placeholder=\"First Name\" ng-model=vm.firstName required class=form-control></div></div><div class=form-group><label for=lastName class=\"col-md-2 control-label\">Last Name</label><div class=col-md-10><input name=lastName type=lastName placeholder=\"Last Name\" ng-model=vm.lastName required class=form-control></div></div><div class=form-group><div class=\"col-md-10 col-md-offset-2\"><div class=pull-right><button ng-click=vm.signup() ng-disabled=signupForm.$invalid class=\"btn btn-primary\">Submit</button> &nbsp;<a href=\"/\" class=\"btn btn-default\">Cancel</a></div></div></div></fieldset></form></div></div>");
 $templateCache.put("app/dashboard/dashboard.html","<div>Hello From Dashboard Controller</div>");
 $templateCache.put("app/employment/employment.html","<div>Hello From Employment Controller</div>");
 $templateCache.put("app/gyms/gyms.html","<div>Hello From Gyms Controller</div>");
 $templateCache.put("app/main/main.html","<h1>Now Displaying The Main Controller</h1><h2>{{ vm.myVar}}</h2>");
 $templateCache.put("app/memberships/memberships.html","<div>Hello From Memberships Controller</div>");
-$templateCache.put("app/navbar/navbarTemplate.html","<div class=\"navbar navbar-inverse navbar-fixed-top\"><div class=container><div class=navbar-header><a class=navbar-brand href=\"/\">RecSpy</a></div><div class=\"navbar-collapse collapse\"><ul class=\"nav navbar-nav navbar-left\"><li><a href=\"/\">Home</a></li><li ng-show=identity.isAuthenticated()><a href=/dashboard>Dashboard</a></li><li><a href=/gyms>Gyms</a></li></ul><login-directive></login-directive></div></div></div>");
-$templateCache.put("app/ownership/ownership.html","<div ng-show=!vm.gym class=container>You do not currently own a gym.</div><div ng-show=vm.gym class=container>You currently own a gym: {{vm.gym}}</div>");}]);
+$templateCache.put("app/ownership/ownership.html","<div ng-show=!vm.gym class=container>You do not currently own a gym.<div class=well><form name=createGymForm class=form-horizontal><legend>New Gym Information</legend><div class=form-group><label for=gymName class=\"col-md-2 control-label\">Gym Name</label><div class=col-md-10><input name=gymName type=text placeholder=\"Gym Name\" ng-model=vm.gymName required class=form-control></div></div><div class=form-group><div class=\"col-md-10 col-md-offset-2\"><div class=pull-right><button ng-click=vm.createGym() ng-disabled=createGymForm.$invalid class=\"btn btn-primary\">Create</button> &nbsp;<a href=\"/\" class=\"btn btn-default\">Cancel</a></div></div></div></form></div></div><div ng-show=vm.gym class=container>You currently own a gym: {{vm.gym}}</div>");
+$templateCache.put("app/navbar/navbarTemplate.html","<div class=\"navbar navbar-inverse navbar-fixed-top\"><div class=container><div class=navbar-header><a class=navbar-brand href=\"/\">RecSpy</a></div><div class=\"navbar-collapse collapse\"><ul class=\"nav navbar-nav navbar-left\"><li><a href=\"/\">Home</a></li><li ng-show=identity.isAuthenticated()><a href=/dashboard>Dashboard</a></li><li><a href=/gyms>Gyms</a></li></ul><login-directive></login-directive></div></div></div>");}]);
