@@ -5,12 +5,12 @@ var gymSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    address: {
+/*    address: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Address',
         required: false,
         unique: true
-    },
+    }, */
     owner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
