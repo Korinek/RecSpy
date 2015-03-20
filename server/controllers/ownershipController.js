@@ -31,6 +31,9 @@ exports.createOwnership = function(req, res, next) {
                 reason: err.toString()
             });
         }
+        console.log('Created Gym');
+        console.log(gym);
+        console.log('----');
         res.send(gym);
     });
 };

@@ -1,6 +1,7 @@
 var express = require('express'),
     auth = require('./auth'),
     usersController = require('../controllers/usersController'),
+    gymsController = require('../controllers/gymsController'),
     dashboardController = require('../controllers/dashboardController'),
     employmentController = require('../controllers/employmentController'),
     ownershipController = require('../controllers/ownershipController'),
@@ -24,6 +25,7 @@ module.exports = function(app, config) {
     app.post('/api/login', auth.authenticate);
     app.post('/api/ownership', auth.requiresLogin, ownershipController.createOwnership);
 
+    app.get('/api/gyms', gymsController.getAllGyms);
     app.get('/api/dashboard', auth.requiresLogin, dashboardController.getGymStatistics);
     app.get('/api/employment', auth.requiresLogin, employmentController.getEmployment);
     app.get('/api/ownership', auth.requiresLogin, ownershipController.getOwnership);

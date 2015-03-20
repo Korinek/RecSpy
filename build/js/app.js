@@ -300,11 +300,49 @@
 (function() {
     'use strict';
 
-    var GymsController = function() {
+    var gymService = function($http, $q) {
+        return {
+            search: function() {
+                var deferred = $q.defer();
+                $http.get('/api/gyms').then(function(response) {
+                    console.log('--search--');
+                    console.log(response);
+                    console.log('----------');
+                    deferred.resolve({
+                        success: true,
+                        gyms: response.data
+                    });
+
+                }, function(error) {
+                    console.log('--search--');
+                    console.log(error);
+                    console.log('----------');
+                    deferred.resolve({
+                        success: false,
+                        error: error.data
+                    });
+                });
+                return deferred.promise;
+            }
+        };
+    };
+}());
+
+(function() {
+    'use strict';
+
+    var GymsController = function(gymService) {
         var vm = this;
+        gymService.search().then(function(response) {
+            if (response.success) {
+                vm.gyms = response.gyms;
+            } else {
+                console.log(response.error);
+            }
+        });
     };
 
-    GymsController.$inject = [];
+    GymsController.$inject = ['gymService'];
     angular.module('app').controller('GymsController', GymsController);
 }());
 
@@ -439,5 +477,5 @@ $templateCache.put("app/employment/employment.html","<div>Hello From Employment 
 $templateCache.put("app/gyms/gyms.html","<div>Hello From Gyms Controller</div>");
 $templateCache.put("app/main/main.html","<h1>Now Displaying The Main Controller</h1><h2>{{ vm.myVar}}</h2>");
 $templateCache.put("app/memberships/memberships.html","<div>Hello From Memberships Controller</div>");
-$templateCache.put("app/ownership/ownership.html","<div ng-show=!vm.gym class=container>You do not currently own a gym.<div class=well><form name=createGymForm class=form-horizontal><legend>New Gym Information</legend><div class=form-group><label for=gymName class=\"col-md-2 control-label\">Gym Name</label><div class=col-md-10><input name=gymName type=text placeholder=\"Gym Name\" ng-model=vm.gymName required class=form-control></div></div><div class=form-group><div class=\"col-md-10 col-md-offset-2\"><div class=pull-right><button ng-click=vm.createGym() ng-disabled=createGymForm.$invalid class=\"btn btn-primary\">Create</button> &nbsp;<a href=\"/\" class=\"btn btn-default\">Cancel</a></div></div></div></form></div></div><div ng-show=vm.gym class=container>You currently own a gym: {{vm.gym}}</div>");
-$templateCache.put("app/navbar/navbarTemplate.html","<div class=\"navbar navbar-inverse navbar-fixed-top\"><div class=container><div class=navbar-header><a class=navbar-brand href=\"/\">RecSpy</a></div><div class=\"navbar-collapse collapse\"><ul class=\"nav navbar-nav navbar-left\"><li><a href=\"/\">Home</a></li><li ng-show=identity.isAuthenticated()><a href=/dashboard>Dashboard</a></li><li><a href=/gyms>Gyms</a></li></ul><login-directive></login-directive></div></div></div>");}]);
+$templateCache.put("app/navbar/navbarTemplate.html","<div class=\"navbar navbar-inverse navbar-fixed-top\"><div class=container><div class=navbar-header><a class=navbar-brand href=\"/\">RecSpy</a></div><div class=\"navbar-collapse collapse\"><ul class=\"nav navbar-nav navbar-left\"><li><a href=\"/\">Home</a></li><li ng-show=identity.isAuthenticated()><a href=/dashboard>Dashboard</a></li><li><a href=/gyms>Gyms</a></li></ul><login-directive></login-directive></div></div></div>");
+$templateCache.put("app/ownership/ownership.html","<div ng-show=!vm.gym class=container>You do not currently own a gym.<div class=well><form name=createGymForm class=form-horizontal><legend>New Gym Information</legend><div class=form-group><label for=gymName class=\"col-md-2 control-label\">Gym Name</label><div class=col-md-10><input name=gymName type=text placeholder=\"Gym Name\" ng-model=vm.gymName required class=form-control></div></div><div class=form-group><div class=\"col-md-10 col-md-offset-2\"><div class=pull-right><button ng-click=vm.createGym() ng-disabled=createGymForm.$invalid class=\"btn btn-primary\">Create</button> &nbsp;<a href=\"/\" class=\"btn btn-default\">Cancel</a></div></div></div></form></div></div><div ng-show=vm.gym class=container>You currently own a gym: {{vm.gym}}</div>");}]);
