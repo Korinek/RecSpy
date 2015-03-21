@@ -5,12 +5,6 @@ var gymSchema = mongoose.Schema({
         type: String,
         required: true
     },
-/*    address: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Address',
-        required: false,
-        unique: true
-    }, */
     owner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -23,7 +17,19 @@ var gymSchema = mongoose.Schema({
         required: false,
         unique: false
     },
+    pendingEmployees: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'User',
+        required: false,
+        unique: false
+    },
     members: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'User',
+        required: false,
+        unique: false
+    },
+    pendingMembers: {
         type: [mongoose.Schema.Types.ObjectId],
         ref: 'User',
         required: false,
