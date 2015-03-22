@@ -26,13 +26,13 @@
     <h3 class="col-lg-1 col-centered">{{vm.gym.name}}</h3>
     </br>
     <ul class="col-md-6 list-group">
-        <li class="list-group-item active">Users</li>
-        <li ng-repeat="pendingUser in vm.gym.pendingUsers" class="list-group-item">
-            {{pendingUser.firstName + ' ' + pendingUser.lastName}}
+        <li class="list-group-item active">Members</li>
+        <li ng-repeat="pendingMember in vm.gym.pendingMembers" class="list-group-item">
+            {{pendingMember.firstName + ' ' + pendingMember.lastName}}
         </li>
 
-        <li ng-repeat="user in vm.gym.users" class="list-group-item">
-            {{user.firstName + ' ' + user.lastName}}
+        <li ng-repeat="member in vm.gym.members" class="list-group-item">
+            {{member.firstName + ' ' + member.lastName}}
         </li>
     </ul>
     <ul class="col-md-6 list-group">
