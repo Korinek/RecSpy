@@ -31,10 +31,10 @@
             {{pendingMember.firstName + ' ' + pendingMember.lastName}} (pending)
             <div class="user-action">
                 <a href="" ng-click="vm.deleteMembership(pendingMember)">
-                    <img src="/client/images/delete_membership.png">
+                    <img src="/client/images/cross.png">
                 </a>
                 <a href="" ng-click="vm.acceptMembership(pendingMember)">
-                    <img src="/client/images/request_membership.png">
+                    <img src="/client/images/add.png">
                 </a>
             </div>
         </li>
@@ -42,7 +42,7 @@
         <li ng-repeat="member in vm.gym.members" class="list-group-item">
             {{member.firstName + ' ' + member.lastName}}
             <a href="" ng-click="vm.deleteMembership(member)" class="user-action">
-                <img src="/client/images/delete_membership.png">
+                <img src="/client/images/cross.png">
             </a>
         </li>
     </ul>
@@ -50,18 +50,20 @@
         <li class="list-group-item active">Employees</li>
         <li ng-repeat="pendingEmployee in vm.gym.pendingEmployees" class="list-group-item">
             {{pendingEmployee.firstName + ' ' + pendingEmployee.lastName}}
-            <a href="" ng-click="vm.deleteEmployment(pendingEmployment)">
-                <img src="/client/images/delete_membership.png">
-            </a>
-            <a href="" ng-cilck="vm.acceptEmployment(pendingEmployment)">
-                <img src="/client/images/request_membership.png">
-            </a>
+            <div class="user-acion">
+                <a href="" ng-click="vm.deleteEmployment(pendingEmployment)">
+                    <img src="/client/images/cross.png">
+                </a>
+                <a href="" ng-click="vm.acceptEmployment(pendingEmployment)">
+                    <img src="/client/images/add.png">
+                </a>
+            </div>
         </li>
 
         <li ng-repeat="employee in vm.gym.employees" class="list-group-item">
             {{employee.firstName + ' ' + employee.lastName}}
             <a href="" ng-click="vm.deleteEmployment(employee)" class="user-action">
-                <img src="/client/images/delete_membership.png">
+                <img src="/client/images/cross.png">
             </a>
         </li>
     </ul>
