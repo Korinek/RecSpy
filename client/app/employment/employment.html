@@ -1,1 +1,30 @@
-<div>Hello From Employment Controller</div>
+<div ng-show="!vm.employmentGym" class="container col-centered">
+    You are not currently employed at any registered gym.
+</div>
+
+<div ng-show="vm.employmentGym" class="container">
+    <h3 class="col-centered">{{vm.gym.name}}</h3>
+    </br>
+    <ul class="col-md-6 list-group">
+        <li class="list-group-item-active">Checked In</li>
+        <li ng-repeat="checkedInMember in vm.gym.checkedInMembers" class="list-group-item">
+            {{checkedInMember.firstName + ' ' + checkedInMember.lastName}}
+            <div class="user-action">
+                <a href="" ng-click="vm.checkOutMember(checkedInMember)">
+                    <img src="/client/images/right_arrow.png">
+                </a>
+            </div>
+        </li> 
+    </ul>
+    <ul class="col-md-6 list-group">
+        <li class="list-group-item-active"> Checked Out</li>
+        <li ng-repeat="checkedOutMember in vm.gym.checkedInMembers" class="list-group-item">
+            {{checkedOutMember.firstName + ' ' + checkedOutMember.lastName}}
+            <div class="user-action">
+                <a href="" ng-click="vm.checkInMember(checkedOutMember)">
+                    <img src="/client/images/left_arrow.png">
+                </a>
+            </div>
+        </li>
+    </ul
+</div>

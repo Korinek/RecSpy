@@ -10,14 +10,10 @@
                 ng-click="vm.requestMembership(gym)">
                     <img src="/client/images/add.png">
                 </a>
-                <a href="" ng-show="gym.isCurrentUserMember || gym.isCurrentUserPendingMember"
-                ng-click="vm.deleteMembership(gym)">
-                    <img src="/client/images/cross.png">
-                </a>
-                <a href="" ng-show="gym.isCurrentUserPendingMember">
+                <a href="/memberships" ng-show="gym.isCurrentUserPendingMember">
                     <img src="/client/images/question.png">
                 </a>
-                <a href="" ng-show="gym.isCurrentUserMember">
+                <a href="/memberships" ng-show="gym.isCurrentUserMember">
                     <img src="/client/images/check.png">
                 </a>
         </li>
