@@ -12,6 +12,9 @@
         var vm = this;
         ownershipService.getOwnedGym().then(function(response) {
             if (response.success) {
+                console.log('--getOwnedGym=success--');
+                console.log(response);
+                console.log('-----------------------');
                 vm.gym = response.gym;
             } else {
                 requestErrorService.handleSessionExpired();
@@ -21,6 +24,9 @@
         vm.createGym = function() {
             ownershipService.createGym(vm.gymName).then(function(response) {
                 if (response.success) {
+                    console.log('--createdGym=success--');
+                    console.log(response);
+                    console.log('-----------------------');
                     vm.gym = response.gym;
                 } else {
                     notifierService.error(response.error);
@@ -40,10 +46,10 @@
         };
 
         vm.acceptMembership = function(pendingMember) {
-            ownershipService.deleteMembership(pendingMember, vm.gym).then(function(response) {
+            ownershipService.acceptMembership(pendingMember, vm.gym).then(function(response) {
                 if (response.success) {
                     remove(vm.gym.pendingMembers, pendingMember);
-                    vm.gym.members.add(pendingMember);
+                    vm.gym.members.push(pendingMember);
                 } else {
                     console.log(response.error);
                 }

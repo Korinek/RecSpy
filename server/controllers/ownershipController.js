@@ -38,6 +38,11 @@ exports.getOwnership = function(req, res, next) {
             });
         }
 
+        if (!gym) {
+            res.send(gym);
+            return;
+        }
+
         var scrubbedGym = {
             _id: gym._id,
             name: gym.name,

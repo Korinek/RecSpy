@@ -3,12 +3,14 @@
 
     var employmentService = function($http, $q, membershipService) {
         return {
-            acceptMembership: function(pendingMembership, gym) {
+            acceptMembership: function(pendingMember, gym) {
                 var deferred = $q.defer();
                 $http.post('/api/acceptMembership', {
                     pendingMember: pendingMember,
                     gym: gym
-                }, function(response) {
+                }).then(function(response) {
+                    console.log('--acceptMembership = success--');
+                    console.log(response);
                     deferred.resolve({
                         success: true
                     });

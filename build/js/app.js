@@ -300,46 +300,36 @@
 (function() {
     'use strict';
 
-    var employmentService = function($http, $q) {
+    var employmentService = function($http, $q, membershipService) {
         return {
-            acceptMember: function(pendingMember, gym) {
+            acceptMembership: function(pendingMember, gym) {
                 var deferred = $q.defer();
-                $http.post('/api/acceptMember', {
+                $http.post('/api/acceptMembership', {
                     pendingMember: pendingMember,
                     gym: gym
-                }, function(response) {
+                }).then(function(response) {
+                    console.log('--acceptMembership = success--');
+                    console.log(response);
                     deferred.resolve({
                         success: true
                     });
                 }, function(error) {
                     deferred.resolve({
-                        success: false
+                        success: false,
+                        error: error.data.reason
                     });
                 });
 
                 return deferred.promise;
             },
-            deleteMember: function(member, gym) {
-                var deferred = $q.defer();
-                $http.post('/api/deleteMember', {
-                    member: member,
-                    gym: gym
-                }, function(response) {
-                    deferred.resolve({
-                        success: true
-                    });
-                }, function(error) {
-                    deferred.resolve({
-                        success: false
-                    });
-                });
-
-                return deferred.promise;
+            deleteMembership: function(member, gym) {
+                return membershipService.deleteMembership(member, gym);
             }
         };
     };
 
-    angular.module('app').factory('employmentService', ['$http', '$q', employmentService]);
+    angular.module('app')
+        .factory('employmentService', ['$http', '$q', 'membershipService', employmentService]);
 }());
 
 (function() {
@@ -350,21 +340,15 @@
             search: function() {
                 var deferred = $q.defer();
                 $http.get('/api/gyms').then(function(response) {
-                    console.log('--search--');
-                    console.log(response);
-                    console.log('----------');
                     deferred.resolve({
                         success: true,
                         gyms: response.data
                     });
 
                 }, function(error) {
-                    console.log('--search--');
-                    console.log(error);
-                    console.log('----------');
                     deferred.resolve({
                         success: false,
-                        error: error.data
+                        error: error.data.reason
                     });
                 });
                 return deferred.promise;
@@ -392,9 +376,8 @@
         };
 
         vm.deleteMembership = function(gym) {
-            membershipService.deleteMembership(gym).then(function(response) {
+            membershipService.deleteMembership(identityService.currentUser, gym).then(function(response) {
                 if (response.success) {
-                    console.log('delete success!');
                     gym.isCurrentUserMember = false;
                     gym.isCurrentUserPendingMember = false;
                 } else {
@@ -438,40 +421,30 @@
                 $http.post('/api/requestMembership', {
                     gym: gym
                 }).then(function(response) {
-                    console.log('--requestMembership--');
-                    console.log(response);
-                    console.log('---------------------');
                     deferred.resolve({
                         success: true
                     });
                 }, function(error) {
-                    console.log('--requestMembership--');
-                    console.log(error);
-                    console.log('---------------------');
                     deferred.resolve({
                         success: false,
-                        error: error.data
+                        error: error.data.reason
                     });
                 });
                 return deferred.promise;
             },
-            deleteMembership: function(gym) {
+            deleteMembership: function(member, gym) {
                 var deferred = $q.defer();
                 $http.post('/api/deleteMembership', {
+                    member: member,
                     gym: gym
                 }).then(function(response) {
-                    console.log('--deleteMembership--');
-                    console.log(response);
-                    console.log('--------------------');
                     deferred.resolve({
                         success: true
                     });
                 }, function(error) {
-                    console.log('--deleteMembership--');
-                    console.log(error);
-                    console.log('-------------------');
                     deferred.resolve({
-                        success: false
+                        success: false,
+                        error: error.data.reason
                     });
                 });
                 return deferred.promise;
@@ -524,6 +497,9 @@
         var vm = this;
         ownershipService.getOwnedGym().then(function(response) {
             if (response.success) {
+                console.log('--getOwnedGym=success--');
+                console.log(response);
+                console.log('-----------------------');
                 vm.gym = response.gym;
             } else {
                 requestErrorService.handleSessionExpired();
@@ -533,6 +509,9 @@
         vm.createGym = function() {
             ownershipService.createGym(vm.gymName).then(function(response) {
                 if (response.success) {
+                    console.log('--createdGym=success--');
+                    console.log(response);
+                    console.log('-----------------------');
                     vm.gym = response.gym;
                 } else {
                     notifierService.error(response.error);
@@ -540,8 +519,8 @@
             });
         };
 
-        vm.deleteMember = function(member) {
-            ownershipService.deleteMember(member).then(function(response) {
+        vm.deleteMembership = function(member) {
+            ownershipService.deleteMembership(member, vm.gym).then(function(response) {
                 if (response.success) {
                     remove(vm.gym.members, member);
                     remove(vm.gym.pendingMembers, member);
@@ -551,19 +530,19 @@
             });
         };
 
-        vm.acceptMember = function(pendingMember) {
-            ownershipService.deleteMember(pendingMember).then(function(response) {
+        vm.acceptMembership = function(pendingMember) {
+            ownershipService.acceptMembership(pendingMember, vm.gym).then(function(response) {
                 if (response.success) {
                     remove(vm.gym.pendingMembers, pendingMember);
-                    vm.gym.members.add(pendingMember);
+                    vm.gym.members.push(pendingMember);
                 } else {
                     console.log(response.error);
                 }
             });
         };
 
-        vm.deleteEmployee = function(employee) {
-            ownershipService.deleteEmployee(employee).then(function(response) {
+        vm.deleteEmployment = function(employee) {
+            ownershipService.deleteEmployment(employee, vm.gym).then(function(response) {
                 if (response.success) {
                     remove(vm.gym.employees, employee);
                 } else {
@@ -572,8 +551,8 @@
             });
         };
 
-        vm.acceptEmployee = function(pendingEmployee) {
-            ownershipService.acceptEmployee(pendingEmployee).then(function(response) {
+        vm.acceptEmployment = function(pendingEmployee) {
+            ownershipService.acceptEmployment(pendingEmployee, vm.gym).then(function(response) {
                 if (response.success) {
                     remove(vm.gym.pendingEmployees, pendingEmployee);
                     vm.gym.employees.push(pendingEmployee);
@@ -596,9 +575,7 @@
             getOwnedGym: function() {
                 var deferred = $q.defer();
                 $http.get('/api/ownership').then(function(response) {
-                    console.log('---getOwnedGym---');
                     console.log(response);
-                    console.log('-----------------');
                     deferred.resolve({
                         success: true,
                         gym: response.data
@@ -618,18 +595,11 @@
                         gymName: gymName
                     })
                     .then(function(response) {
-                        console.log('---createGym---');
-                        console.log(response.data);
-                        console.log('---------------');
-
                         deferred.resolve({
                             success: true,
                             gym: response.data
                         });
                     }, function(error) {
-                        console.log('---createGym---');
-                        console.log(error);
-                        console.log('---------------');
                         deferred.resolve({
                             success: false,
                             error: error.data.reason
@@ -638,9 +608,9 @@
 
                 return deferred.promise;
             },
-            acceptEmployee: function(pendingEmployee, gym) {
+            acceptEmployment: function(pendingEmployee, gym) {
                 var deferred = $q.defer();
-                $http.post('/api/acceptEmployee', {
+                $http.post('/api/acceptEmployment', {
                     pendingEmployee: pendingEmployee,
                     gym: gym
                 }, function(response) {
@@ -649,15 +619,16 @@
                     });
                 }, function(error) {
                     deferred.resolve({
-                        success: false
+                        success: false,
+                        error: error.data.reason
                     });
                 });
 
                 return deferred.promise;
             },
-            deleteEmployee: function(employee, gym) {
+            deleteEmployment: function(employee, gym) {
                 var deferred = $q.defer();
-                $http.post('/api/deleteEmployee', {
+                $http.post('/api/deleteEmployment', {
                     employee: employee,
                     gym: gym
                 }, function(response) {
@@ -666,17 +637,18 @@
                     });
                 }, function(error) {
                     deferred.resolve({
-                        success: false
+                        success: false,
+                        error: error.data.reason
                     });
                 });
 
                 return deferred.promise;
             },
-            acceptMember: function(pendingMember, gym) {
-                return employmentService.acceptMember(pendingMember, gym);
+            acceptMembership: function(pendingMember, gym) {
+                return employmentService.acceptMembership(pendingMember, gym);
             },
-            deleteMember: function(member, gym) {
-                return employmentService.deleteMember(member, gym);
+            deleteMembership: function(member, gym) {
+                return employmentService.deleteMembership(member, gym);
             }
         };
     };
@@ -693,4 +665,4 @@ $templateCache.put("app/gyms/gyms.html","<div class=container><ul class=\"list-g
 $templateCache.put("app/main/main.html","<h1>Now Displaying The Main Controller</h1><h2>{{ vm.myVar}}</h2>");
 $templateCache.put("app/memberships/memberships.html","<div>Hello From Memberships Controller</div>");
 $templateCache.put("app/navbar/navbarTemplate.html","<div class=\"navbar navbar-inverse navbar-fixed-top\"><div class=container><div class=navbar-header><a class=navbar-brand href=\"/\">RecSpy</a></div><div class=\"navbar-collapse collapse\"><ul class=\"nav navbar-nav navbar-left\"><li><a href=\"/\">Home</a></li><li ng-show=identity.isAuthenticated()><a href=/dashboard>Dashboard</a></li><li ng-show=identity.isAuthenticated()><a href=/gyms>Gyms</a></li></ul><login-directive></login-directive></div></div></div>");
-$templateCache.put("app/ownership/ownership.html","<div ng-show=!vm.gym class=container>You do not currently own a gym.<div class=well><form name=createGymForm class=form-horizontal><legend>New Gym Information</legend><div class=form-group><label for=gymName class=\"col-md-2 control-label\">Gym Name</label><div class=col-md-10><input name=gymName type=text placeholder=\"Gym Name\" ng-model=vm.gymName required class=form-control></div></div><div class=form-group><div class=\"col-md-10 col-md-offset-2\"><div class=pull-right><button ng-click=vm.createGym() ng-disabled=createGymForm.$invalid class=\"btn btn-primary\">Create</button> &nbsp;<a href=\"/\" class=\"btn btn-default\">Cancel</a></div></div></div></form></div></div><div ng-show=vm.gym class=container><h3 class=\"col-lg-1 col-centered\">{{vm.gym.name}}</h3><br><ul class=\"col-md-6 list-group\"><li class=\"list-group-item active\">Members</li><li ng-repeat=\"pendingMember in vm.gym.pendingMembers\" class=list-group-item>{{pendingMember.firstName + \' \' + pendingMember.lastName}} (pending)<div class=user-action><a href ng-click=vm.deleteMember(pendingMember)><img src=/client/images/delete_membership.png></a> <a href ng-cilck=vm.acceptMember(pendingMember)><img src=/client/images/request_membership.png></a></div></li><li ng-repeat=\"member in vm.gym.members\" class=list-group-item>{{member.firstName + \' \' + member.lastName}} <a href ng-click=vm.deleteMember(member) class=user-action><img src=/client/images/delete_membership.png></a></li></ul><ul class=\"col-md-6 list-group\"><li class=\"list-group-item active\">Employees</li><li ng-repeat=\"pendingEmployee in vm.gym.pendingEmployees\" class=list-group-item>{{pendingEmployee.firstName + \' \' + pendingEmployee.lastName}} <a href ng-click=vm.deleteEmployment(pendingEmployment)><img src=/client/images/delete_membership.png></a> <a href ng-cilck=vm.acceptEmployment(pendingEmployment)><img src=/client/images/request_membership.png></a></li><li ng-repeat=\"employee in vm.gym.employees\" class=list-group-item>{{employee.firstName + \' \' + employee.lastName}} <a href ng-click=vm.deleteEmployment(employee) class=user-action><img src=/client/images/delete_membership.png></a></li></ul></div>");}]);
+$templateCache.put("app/ownership/ownership.html","<div ng-show=!vm.gym class=container>You do not currently own a gym.<div class=well><form name=createGymForm class=form-horizontal><legend>New Gym Information</legend><div class=form-group><label for=gymName class=\"col-md-2 control-label\">Gym Name</label><div class=col-md-10><input name=gymName type=text placeholder=\"Gym Name\" ng-model=vm.gymName required class=form-control></div></div><div class=form-group><div class=\"col-md-10 col-md-offset-2\"><div class=pull-right><button ng-click=vm.createGym() ng-disabled=createGymForm.$invalid class=\"btn btn-primary\">Create</button> &nbsp;<a href=\"/\" class=\"btn btn-default\">Cancel</a></div></div></div></form></div></div><div ng-show=vm.gym class=container><h3 class=col-centered>{{vm.gym.name}}</h3><br><ul class=\"col-md-6 list-group\"><li class=\"list-group-item active\">Members</li><li ng-repeat=\"pendingMember in vm.gym.pendingMembers\" class=list-group-item>{{pendingMember.firstName + \' \' + pendingMember.lastName}} (pending)<div class=user-action><a href ng-click=vm.deleteMembership(pendingMember)><img src=/client/images/delete_membership.png></a> <a href ng-click=vm.acceptMembership(pendingMember)><img src=/client/images/request_membership.png></a></div></li><li ng-repeat=\"member in vm.gym.members\" class=list-group-item>{{member.firstName + \' \' + member.lastName}} <a href ng-click=vm.deleteMembership(member) class=user-action><img src=/client/images/delete_membership.png></a></li></ul><ul class=\"col-md-6 list-group\"><li class=\"list-group-item active\">Employees</li><li ng-repeat=\"pendingEmployee in vm.gym.pendingEmployees\" class=list-group-item>{{pendingEmployee.firstName + \' \' + pendingEmployee.lastName}} <a href ng-click=vm.deleteEmployment(pendingEmployment)><img src=/client/images/delete_membership.png></a> <a href ng-cilck=vm.acceptEmployment(pendingEmployment)><img src=/client/images/request_membership.png></a></li><li ng-repeat=\"employee in vm.gym.employees\" class=list-group-item>{{employee.firstName + \' \' + employee.lastName}} <a href ng-click=vm.deleteEmployment(employee) class=user-action><img src=/client/images/delete_membership.png></a></li></ul></div>");}]);
