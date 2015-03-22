@@ -23,43 +23,37 @@ var sendError = function(res, err) {
 };
 
 exports.getMemberships = function(req, res, next) {
-    res.send('dsajdalsj');
+    res.send('get memberships response');
+};
+
+exports.acceptMembership = function(req, res, next) {
+    res.send('accept membership response');
 };
 
 exports.deleteMembership = function(req, res, next) {
     var user = req.user;
-    var gym = req.body.gym;
     Gym.findOne({
-        name: gym.name
+        _id: req.body.gym._id
     }, function(err, gym) {
         if (err) {
             sendError(res, err);
         }
 
-        var indexOfMember = gym.members.indexOf(user._id);
-        if (indexOfMember >= 0) {
-
-            var updatedMembers = gym.members;
-            updatedMembers.splice(indexOfMember, 1);
-            Gym.update(gym, {
-                members: updatedMembers
-            }, function(err, numberAffected, rawResponse) {
-                if (err) {
-                    sendError(res, err);
-                }
-                sendSuccess(res);
+        if (user._id != req.body.member._id && user._id != gym.owner) {
+            res.status(403);
+            res.send({
+                reason: 'Only the owner/employee of the gym or the user themself my remove a membership.'
             });
+
         } else {
 
-            var indexOfPendingMember = gym.pendingMembers.indexOf(user._id);
-            if (indexOfPendingMember >= 0) {
-                var updatedPendingMembers = gym.pendingMembers;
-                updatedPendingMembers.splice(indexOfPendingMember, 1);
+            var indexOfMember = gym.members.indexOf(user._id);
+            if (indexOfMember >= 0) {
 
-                Gym.update({
-                    name: gym.name
-                }, {
-                    pendingMembers: updatedPendingMembers
+                var updatedMembers = gym.members;
+                updatedMembers.splice(indexOfMember, 1);
+                Gym.update(gym, {
+                    members: updatedMembers
                 }, function(err, numberAffected, rawResponse) {
                     if (err) {
                         sendError(res, err);
@@ -67,7 +61,25 @@ exports.deleteMembership = function(req, res, next) {
                     sendSuccess(res);
                 });
             } else {
-                sendFailure(res);
+
+                var indexOfPendingMember = gym.pendingMembers.indexOf(user._id);
+                if (indexOfPendingMember >= 0) {
+                    var updatedPendingMembers = gym.pendingMembers;
+                    updatedPendingMembers.splice(indexOfPendingMember, 1);
+
+                    Gym.update({
+                        name: gym.name
+                    }, {
+                        pendingMembers: updatedPendingMembers
+                    }, function(err, numberAffected, rawResponse) {
+                        if (err) {
+                            sendError(res, err);
+                        }
+                        sendSuccess(res);
+                    });
+                } else {
+                    sendFailure(res);
+                }
             }
         }
     });

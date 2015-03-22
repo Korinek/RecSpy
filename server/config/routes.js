@@ -26,6 +26,10 @@ module.exports = function(app, config) {
     app.post('/api/ownership', auth.requiresLogin, ownershipController.createOwnership);
     app.post('/api/deleteMembership', auth.requiresLogin, membershipController.deleteMembership);
     app.post('/api/requestMembership', auth.requiresLogin, membershipController.requestMembership);
+    app.post('/api/acceptMembership', auth.requiresLogin, membershipController.acceptMembership);
+    app.post('/api/deleteEmployment', auth.requiresLogin, employmentController.deleteEmployment);
+    app.post('/api/requestEmployment', auth.requiresLogin, employmentController.requestEmployment);
+    app.post('/api/acceptEmployment', auth.requiresLogin, employmentController.acceptEmployment);
 
     app.get('/api/gyms', auth.requiresLogin, gymsController.getAllGyms);
     app.get('/api/dashboard', auth.requiresLogin, dashboardController.getGymStatistics);

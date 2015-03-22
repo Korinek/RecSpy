@@ -15,9 +15,8 @@
         };
 
         vm.deleteMembership = function(gym) {
-            membershipService.deleteMembership(gym).then(function(response) {
+            membershipService.deleteMembership(identityService.currentUser, gym).then(function(response) {
                 if (response.success) {
-                    console.log('delete success!');
                     gym.isCurrentUserMember = false;
                     gym.isCurrentUserPendingMember = false;
                 } else {

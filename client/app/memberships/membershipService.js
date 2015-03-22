@@ -8,40 +8,30 @@
                 $http.post('/api/requestMembership', {
                     gym: gym
                 }).then(function(response) {
-                    console.log('--requestMembership--');
-                    console.log(response);
-                    console.log('---------------------');
                     deferred.resolve({
                         success: true
                     });
                 }, function(error) {
-                    console.log('--requestMembership--');
-                    console.log(error);
-                    console.log('---------------------');
                     deferred.resolve({
                         success: false,
-                        error: error.data
+                        error: error.data.reason
                     });
                 });
                 return deferred.promise;
             },
-            deleteMembership: function(gym) {
+            deleteMembership: function(member, gym) {
                 var deferred = $q.defer();
                 $http.post('/api/deleteMembership', {
+                    member: member,
                     gym: gym
                 }).then(function(response) {
-                    console.log('--deleteMembership--');
-                    console.log(response);
-                    console.log('--------------------');
                     deferred.resolve({
                         success: true
                     });
                 }, function(error) {
-                    console.log('--deleteMembership--');
-                    console.log(error);
-                    console.log('-------------------');
                     deferred.resolve({
-                        success: false
+                        success: false,
+                        error: error.data.reason
                     });
                 });
                 return deferred.promise;

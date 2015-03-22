@@ -10,6 +10,7 @@ var getRealName = function(userId, newUserList, next) {
         console.log(user.firstName + ' ' + user.lastName);
 
         newUserList.push({
+            _id: user._id,
             firstName: user.firstName,
             lastName: user.lastName
         });
@@ -38,9 +39,12 @@ exports.getOwnership = function(req, res, next) {
         }
 
         var scrubbedGym = {
-            name: gym.name
+            _id: gym._id,
+            name: gym.name,
+            owner: gym.owner
         };
 
+        //This needs refactored so bad, lol.
         convertUserIdListToNames(gym.employees, function(employees) {
             scrubbedGym.employees = employees;
             console.log('finished employees');
@@ -84,9 +88,6 @@ exports.createOwnership = function(req, res, next) {
                 reason: err.toString()
             });
         }
-        console.log('Created Gym');
-        console.log(gym);
-        console.log('----');
         res.send(gym);
     });
 };

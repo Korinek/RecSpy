@@ -6,21 +6,15 @@
             search: function() {
                 var deferred = $q.defer();
                 $http.get('/api/gyms').then(function(response) {
-                    console.log('--search--');
-                    console.log(response);
-                    console.log('----------');
                     deferred.resolve({
                         success: true,
                         gyms: response.data
                     });
 
                 }, function(error) {
-                    console.log('--search--');
-                    console.log(error);
-                    console.log('----------');
                     deferred.resolve({
                         success: false,
-                        error: error.data
+                        error: error.data.reason
                     });
                 });
                 return deferred.promise;

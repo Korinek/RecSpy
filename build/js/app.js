@@ -300,6 +300,51 @@
 (function() {
     'use strict';
 
+    var employmentService = function($http, $q) {
+        return {
+            acceptMember: function(pendingMember, gym) {
+                var deferred = $q.defer();
+                $http.post('/api/acceptMember', {
+                    pendingMember: pendingMember,
+                    gym: gym
+                }, function(response) {
+                    deferred.resolve({
+                        success: true
+                    });
+                }, function(error) {
+                    deferred.resolve({
+                        success: false
+                    });
+                });
+
+                return deferred.promise;
+            },
+            deleteMember: function(member, gym) {
+                var deferred = $q.defer();
+                $http.post('/api/deleteMember', {
+                    member: member,
+                    gym: gym
+                }, function(response) {
+                    deferred.resolve({
+                        success: true
+                    });
+                }, function(error) {
+                    deferred.resolve({
+                        success: false
+                    });
+                });
+
+                return deferred.promise;
+            }
+        };
+    };
+
+    angular.module('app').factory('employmentService', ['$http', '$q', employmentService]);
+}());
+
+(function() {
+    'use strict';
+
     var gymService = function($http, $q) {
         return {
             search: function() {
@@ -468,6 +513,13 @@
 (function() {
     'use strict';
 
+    function remove(collection, item) {
+        var index = collection.indexOf(item);
+        if (index >= 0) {
+            collection.splice(index, 1);
+        }
+    }
+
     var OwnershipController = function(ownershipService, requestErrorService, notifierService) {
         var vm = this;
         ownershipService.getOwnedGym().then(function(response) {
@@ -487,6 +539,49 @@
                 }
             });
         };
+
+        vm.deleteMember = function(member) {
+            ownershipService.deleteMember(member).then(function(response) {
+                if (response.success) {
+                    remove(vm.gym.members, member);
+                    remove(vm.gym.pendingMembers, member);
+                } else {
+                    console.log(response.error);
+                }
+            });
+        };
+
+        vm.acceptMember = function(pendingMember) {
+            ownershipService.deleteMember(pendingMember).then(function(response) {
+                if (response.success) {
+                    remove(vm.gym.pendingMembers, pendingMember);
+                    vm.gym.members.add(pendingMember);
+                } else {
+                    console.log(response.error);
+                }
+            });
+        };
+
+        vm.deleteEmployee = function(employee) {
+            ownershipService.deleteEmployee(employee).then(function(response) {
+                if (response.success) {
+                    remove(vm.gym.employees, employee);
+                } else {
+                    console.log(response.error);
+                }
+            });
+        };
+
+        vm.acceptEmployee = function(pendingEmployee) {
+            ownershipService.acceptEmployee(pendingEmployee).then(function(response) {
+                if (response.success) {
+                    remove(vm.gym.pendingEmployees, pendingEmployee);
+                    vm.gym.employees.push(pendingEmployee);
+                } else {
+                    console.log(response.error);
+                }
+            });
+        };
     };
 
     OwnershipController.$inject = ['ownershipService', 'requestErrorService', 'notifierService'];
@@ -496,7 +591,7 @@
 (function() {
     'use strict';
 
-    var ownershipService = function($http, $q) {
+    var ownershipService = function($http, $q, employmentService) {
         return {
             getOwnedGym: function() {
                 var deferred = $q.defer();
@@ -542,11 +637,52 @@
                     });
 
                 return deferred.promise;
+            },
+            acceptEmployee: function(pendingEmployee, gym) {
+                var deferred = $q.defer();
+                $http.post('/api/acceptEmployee', {
+                    pendingEmployee: pendingEmployee,
+                    gym: gym
+                }, function(response) {
+                    deferred.resolve({
+                        success: true
+                    });
+                }, function(error) {
+                    deferred.resolve({
+                        success: false
+                    });
+                });
+
+                return deferred.promise;
+            },
+            deleteEmployee: function(employee, gym) {
+                var deferred = $q.defer();
+                $http.post('/api/deleteEmployee', {
+                    employee: employee,
+                    gym: gym
+                }, function(response) {
+                    deferred.resolve({
+                        success: true
+                    });
+                }, function(error) {
+                    deferred.resolve({
+                        success: false
+                    });
+                });
+
+                return deferred.promise;
+            },
+            acceptMember: function(pendingMember, gym) {
+                return employmentService.acceptMember(pendingMember, gym);
+            },
+            deleteMember: function(member, gym) {
+                return employmentService.deleteMember(member, gym);
             }
         };
     };
 
-    angular.module('app').factory('ownershipService', ['$http', '$q', ownershipService]);
+    angular.module('app')
+        .factory('ownershipService', ['$http', '$q', 'employmentService', ownershipService]);
 }());
 
 angular.module("app").run(["$templateCache", function($templateCache) {$templateCache.put("app/account/loginTemplate.html","<div class=\"nav navbar-nav navbar-right\" ng-hide=vm.identity.isAuthenticated()><li><a href=/signup>Sign Up</a></li></div><div class=navbar-right><form class=navbar-form ng-hide=vm.identity.isAuthenticated()><div class=form-group><input class=form-control placeholder=Username ng-model=vm.username )=\"\"></div><div class=form-group><input class=form-control type=password placeholder=Password ng-model=vm.password></div><button class=\"btn btn-primary\" ng-click=\"vm.signin(vm.username, vm.password)\">Sign In</button></form><ul ng-show=vm.identity.isAuthenticated() class=\"nav navbar-nav navbar-right\"><li class=dropdown><a class=dropdown-toggle href data-toggle=dropdown>{{vm.identity.currentUser.firstName + \" \" + identity.currentUser.lastName}} <b class=caret></b></a><ul class=dropdown-menu><li><a href=/memberships>Memberships</a></li><li><a href=/employment>Employment</a></li><li><a href=/ownership>Ownership</a></li><li><a href ng-click=vm.signout()>Sign Out</a></li></ul></li></ul></div>");
@@ -557,4 +693,4 @@ $templateCache.put("app/gyms/gyms.html","<div class=container><ul class=\"list-g
 $templateCache.put("app/main/main.html","<h1>Now Displaying The Main Controller</h1><h2>{{ vm.myVar}}</h2>");
 $templateCache.put("app/memberships/memberships.html","<div>Hello From Memberships Controller</div>");
 $templateCache.put("app/navbar/navbarTemplate.html","<div class=\"navbar navbar-inverse navbar-fixed-top\"><div class=container><div class=navbar-header><a class=navbar-brand href=\"/\">RecSpy</a></div><div class=\"navbar-collapse collapse\"><ul class=\"nav navbar-nav navbar-left\"><li><a href=\"/\">Home</a></li><li ng-show=identity.isAuthenticated()><a href=/dashboard>Dashboard</a></li><li ng-show=identity.isAuthenticated()><a href=/gyms>Gyms</a></li></ul><login-directive></login-directive></div></div></div>");
-$templateCache.put("app/ownership/ownership.html","<div ng-show=!vm.gym class=container>You do not currently own a gym.<div class=well><form name=createGymForm class=form-horizontal><legend>New Gym Information</legend><div class=form-group><label for=gymName class=\"col-md-2 control-label\">Gym Name</label><div class=col-md-10><input name=gymName type=text placeholder=\"Gym Name\" ng-model=vm.gymName required class=form-control></div></div><div class=form-group><div class=\"col-md-10 col-md-offset-2\"><div class=pull-right><button ng-click=vm.createGym() ng-disabled=createGymForm.$invalid class=\"btn btn-primary\">Create</button> &nbsp;<a href=\"/\" class=\"btn btn-default\">Cancel</a></div></div></div></form></div></div><div ng-show=vm.gym class=container><h3 class=\"col-lg-1 col-centered\">{{vm.gym.name}}</h3><br><ul class=\"col-md-6 list-group\"><li class=\"list-group-item active\">Members</li><li ng-repeat=\"pendingMember in vm.gym.pendingMembers\" class=list-group-item>{{pendingMember.firstName + \' \' + pendingMember.lastName}}</li><li ng-repeat=\"member in vm.gym.members\" class=list-group-item>{{member.firstName + \' \' + member.lastName}}</li></ul><ul class=\"col-md-6 list-group\"><li class=\"list-group-item active\">Employees</li><li ng-repeat=\"pendingEmployee in vm.gym.pendingEmployees\" class=list-group-item>{{pendingEmployee.firstName + \' \' + pendingEmployee.lastName}}</li><li ng-repeat=\"employee in vm.gym.employees\" class=list-group-item>{{employee.firstName + \' \' + employee.lastName}}</li></ul></div>");}]);
+$templateCache.put("app/ownership/ownership.html","<div ng-show=!vm.gym class=container>You do not currently own a gym.<div class=well><form name=createGymForm class=form-horizontal><legend>New Gym Information</legend><div class=form-group><label for=gymName class=\"col-md-2 control-label\">Gym Name</label><div class=col-md-10><input name=gymName type=text placeholder=\"Gym Name\" ng-model=vm.gymName required class=form-control></div></div><div class=form-group><div class=\"col-md-10 col-md-offset-2\"><div class=pull-right><button ng-click=vm.createGym() ng-disabled=createGymForm.$invalid class=\"btn btn-primary\">Create</button> &nbsp;<a href=\"/\" class=\"btn btn-default\">Cancel</a></div></div></div></form></div></div><div ng-show=vm.gym class=container><h3 class=\"col-lg-1 col-centered\">{{vm.gym.name}}</h3><br><ul class=\"col-md-6 list-group\"><li class=\"list-group-item active\">Members</li><li ng-repeat=\"pendingMember in vm.gym.pendingMembers\" class=list-group-item>{{pendingMember.firstName + \' \' + pendingMember.lastName}} (pending)<div class=user-action><a href ng-click=vm.deleteMember(pendingMember)><img src=/client/images/delete_membership.png></a> <a href ng-cilck=vm.acceptMember(pendingMember)><img src=/client/images/request_membership.png></a></div></li><li ng-repeat=\"member in vm.gym.members\" class=list-group-item>{{member.firstName + \' \' + member.lastName}} <a href ng-click=vm.deleteMember(member) class=user-action><img src=/client/images/delete_membership.png></a></li></ul><ul class=\"col-md-6 list-group\"><li class=\"list-group-item active\">Employees</li><li ng-repeat=\"pendingEmployee in vm.gym.pendingEmployees\" class=list-group-item>{{pendingEmployee.firstName + \' \' + pendingEmployee.lastName}} <a href ng-click=vm.deleteEmployment(pendingEmployment)><img src=/client/images/delete_membership.png></a> <a href ng-cilck=vm.acceptEmployment(pendingEmployment)><img src=/client/images/request_membership.png></a></li><li ng-repeat=\"employee in vm.gym.employees\" class=list-group-item>{{employee.firstName + \' \' + employee.lastName}} <a href ng-click=vm.deleteEmployment(employee) class=user-action><img src=/client/images/delete_membership.png></a></li></ul></div>");}]);
