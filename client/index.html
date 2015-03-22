@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>RecSpy</title>
     <!-- build:css styles/lib.css -->
@@ -15,51 +16,53 @@
     <!-- endinject -->
     <!-- endbuild -->
 </head>
+
 <body ng-app='app' ng-strict-di>
     <navbar-directive></navbar-directive>
     <ng-view></ng-view>
-
+    </br>
     <div class="footer container text-center">
         Created by Haddon Korinek
     </div>
 
-<!-- build:js js/lib.js -->
-<!-- bower:js -->
-<script src="/bower_components/jquery/dist/jquery.js"></script>
-<script src="/bower_components/toastr/toastr.js"></script>
-<script src="/bower_components/angular/angular.js"></script>
-<script src="/bower_components/angular-resource/angular-resource.js"></script>
-<script src="/bower_components/angular-route/angular-route.js"></script>
-<script src="/bower_components/bootstrap/dist/js/bootstrap.js"></script>
-<!-- endbower -->
-<!-- endbuild -->
+    <!-- build:js js/lib.js -->
+    <!-- bower:js -->
+    <script src="/bower_components/jquery/dist/jquery.js"></script>
+    <script src="/bower_components/toastr/toastr.js"></script>
+    <script src="/bower_components/angular/angular.js"></script>
+    <script src="/bower_components/angular-resource/angular-resource.js"></script>
+    <script src="/bower_components/angular-route/angular-route.js"></script>
+    <script src="/bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <!-- endbower -->
+    <!-- endbuild -->
 
-<!-- build:js js/app.js -->
-<!-- inject:js -->
-<script src="/client/app/app.js"></script>
-<script src="/client/app/account/User.js"></script>
-<script src="/client/app/account/authService.js"></script>
-<script src="/client/app/account/identityService.js"></script>
-<script src="/client/app/account/loginController.js"></script>
-<script src="/client/app/account/loginDirective.js"></script>
-<script src="/client/app/account/signupController.js"></script>
-<script src="/client/app/common/notifierService.js"></script>
-<script src="/client/app/common/requestErrorService.js"></script>
-<script src="/client/app/dashboard/dashboardController.js"></script>
-<script src="/client/app/dashboard/dashboardService.js"></script>
-<script src="/client/app/employment/employmentController.js"></script>
-<script src="/client/app/gyms/gymService.js"></script>
-<script src="/client/app/gyms/gymsController.js"></script>
-<script src="/client/app/main/mainController.js"></script>
-<script src="/client/app/memberships/membershipsController.js"></script>
-<script src="/client/app/navbar/navbarDirective.js"></script>
-<script src="/client/app/ownership/ownershipController.js"></script>
-<script src="/client/app/ownership/ownershipService.js"></script>
-<!-- endinject -->
+    <!-- build:js js/app.js -->
+    <!-- inject:js -->
+    <script src="/client/app/app.js"></script>
+    <script src="/client/app/account/User.js"></script>
+    <script src="/client/app/account/authService.js"></script>
+    <script src="/client/app/account/identityService.js"></script>
+    <script src="/client/app/account/loginController.js"></script>
+    <script src="/client/app/account/loginDirective.js"></script>
+    <script src="/client/app/account/signupController.js"></script>
+    <script src="/client/app/common/notifierService.js"></script>
+    <script src="/client/app/common/requestErrorService.js"></script>
+    <script src="/client/app/dashboard/dashboardController.js"></script>
+    <script src="/client/app/dashboard/dashboardService.js"></script>
+    <script src="/client/app/employment/employmentController.js"></script>
+    <script src="/client/app/gyms/gymService.js"></script>
+    <script src="/client/app/gyms/gymsController.js"></script>
+    <script src="/client/app/main/mainController.js"></script>
+    <script src="/client/app/memberships/membershipService.js"></script>
+    <script src="/client/app/memberships/membershipsController.js"></script>
+    <script src="/client/app/navbar/navbarDirective.js"></script>
+    <script src="/client/app/ownership/ownershipController.js"></script>
+    <script src="/client/app/ownership/ownershipService.js"></script>
+    <!-- endinject -->
 
-<!-- inject:templates:js -->
-<!-- endinject -->
-<!-- endbuild -->
+    <!-- inject:templates:js -->
+    <!-- endinject -->
+    <!-- endbuild -->
 </body>
 
 </html>

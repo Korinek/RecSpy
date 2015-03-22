@@ -1,5 +1,18 @@
 <div class="container">
-    <div ng-repeat="gym in vm.gyms">
-        Gym Name: {{gym.name}}
-    </div>
+    <ul class="list-group col-centered col-md-6">
+        <li class="list-group-item active">
+            Gyms
+        </li>
+        <li ng-repeat="gym in vm.gyms" class="list-group-item">
+            {{gym.name}}
+            <a href="" ng-show="!gym.isCurrentUserMember && !gym.isCurrentUserPendingMember" ng-click="vm.requestMembership(gym)">
+                <img src="/client/images/request_membership.png">
+            </a>
+            <a href="" ng-show="gym.isCurrentUserMember || gym.isCurrentUserPendingMember" ng-click="vm.deleteMembership(gym)">
+                <img src="/client/images/delete_membership.png">
+            </a>
+            <a href="" ng-show="gym.isCurrentUserPendingMember"><img src="/client/images/pending_membership.png"></a>
+            <a href="" ng-show="gym.isCurrentUserMember"><img src="/client/images/current_member.png"></a>
+        </li>
+    </ul>
 </div>
