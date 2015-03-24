@@ -1,4 +1,5 @@
-var Gym = require('mongoose').model('Gym');
+var mongoose = require('mongoose'),
+    Gym = mongoose.model('Gym');
 
 var contains = function(list, item) {
     return list.indexOf(item) > 0;
@@ -33,8 +34,38 @@ var sendError = function(res, err) {
     });
 };
 
+var isMember = function(user) {
+    return function(gym) {
+        return gym.members.indexOf(user) >= 0;
+    };
+};
+
+var isPendingMember = function(user) {
+    return function(gym) {
+        return gym.pendingMembers.indexOf(user) >= 0;
+    };
+};
+
 exports.getMemberships = function(req, res, next) {
-    res.send('get memberships response');
+    console.log('getMemberships000');
+    var user = req.user;
+    var userId = mongoose.Types.ObjectId(user._id);
+
+    Gym.find({
+    }, function(err, allGyms) {
+        if (err) {
+            console.log(err);
+            sendError(res, err);
+        } else {
+            var currentMemberships = allGyms.filter(isMember(userId));
+            var pendingMemberships = allGyms.filter(isPendingMember(userId));
+            //Todo: scrub this
+            res.send({
+                currentMemberships: currentMemberships,
+                pendingMemberships: pendingMemberships
+            });
+        }
+    });
 };
 
 exports.acceptMembership = function(req, res, next) {
@@ -98,8 +129,17 @@ exports.deleteMembership = function(req, res, next) {
         if (err) {
             sendError(res, err);
         }
+        console.log('--deleteMembership--');
+        console.log(user._id);
+        console.log(req.body.member._id);
+        console.log(gym.owner);
+        console.log(gym.employees);
 
-        if (user._id !== req.body.member._id && !gym.owner.equals(user._id) && !contains(gym.employees, user._id)) {
+        console.log(!user._id.equals(req.body.member._id));
+        console.log(!gym.owner.equals(user._id));
+        console.log(!contains(gym.employees, user._id));
+
+        if (!user._id.equals(req.body.member._id) && !gym.owner.equals(user._id) && !contains(gym.employees, user._id)) {
             res.status(403);
             res.send({
                 reason: 'Only the owner/employee of the gym or the user themself my remove a membership.'

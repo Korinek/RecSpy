@@ -35,6 +35,25 @@
                     });
                 });
                 return deferred.promise;
+            },
+            searchMemberships: function() {
+                var deferred = $q.defer();
+                $http.get('/api/memberships').then(function(response) {
+                    console.log('--searchMemberships--');
+                    console.log(response);
+                    console.log('---------------------');
+                    deferred.resolve({
+                        success: true,
+                        pendingMemberships: response.data.pendingMemberships,
+                        currentMemberships: response.data.currentMemberships
+                    });
+                }, function(error) {
+                    deferred.resolve({
+                        success: false,
+                        error: error.data.reason
+                    });
+                });
+                return deferred.promise;
             }
         };
     };

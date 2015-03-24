@@ -14,17 +14,6 @@
             });
         };
 
-        vm.deleteMembership = function(gym) {
-            membershipService.deleteMembership(identityService.currentUser, gym).then(function(response) {
-                if (response.success) {
-                    gym.isCurrentUserMember = false;
-                    gym.isCurrentUserPendingMember = false;
-                } else {
-                    console.log(response.error);
-                }
-            });
-        };
-
         gymService.search().then(function(response) {
             if (response.success) {
                 vm.gyms = response.gyms;
