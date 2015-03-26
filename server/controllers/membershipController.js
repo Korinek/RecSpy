@@ -51,8 +51,7 @@ exports.getMemberships = function(req, res, next) {
     var user = req.user;
     var userId = mongoose.Types.ObjectId(user._id);
 
-    Gym.find({
-    }, function(err, allGyms) {
+    Gym.find({}, function(err, allGyms) {
         if (err) {
             console.log(err);
             sendError(res, err);
@@ -129,17 +128,11 @@ exports.deleteMembership = function(req, res, next) {
         if (err) {
             sendError(res, err);
         }
-        console.log('--deleteMembership--');
-        console.log(user._id);
-        console.log(req.body.member._id);
-        console.log(gym.owner);
-        console.log(gym.employees);
+        var isUserMember = user._id.equals(req.body.member._id);
+        var isUserOwner = gym.owner.equals(user._id);
+        var isUserEmployee = gym.contains(gym.employees, user._id);
 
-        console.log(!user._id.equals(req.body.member._id));
-        console.log(!gym.owner.equals(user._id));
-        console.log(!contains(gym.employees, user._id));
-
-        if (!user._id.equals(req.body.member._id) && !gym.owner.equals(user._id) && !contains(gym.employees, user._id)) {
+        if (!isUserMember && !isUserOwner && !isUserEmployee) {
             res.status(403);
             res.send({
                 reason: 'Only the owner/employee of the gym or the user themself my remove a membership.'

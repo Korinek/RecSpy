@@ -30,7 +30,6 @@
                 console.log(response.error);
             }
         });
-
     };
 
     MembershipsController.$inject = ['identityService', 'membershipService'];

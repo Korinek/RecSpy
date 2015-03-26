@@ -41,10 +41,12 @@
             },
             acceptEmployment: function(pendingEmployee, gym) {
                 var deferred = $q.defer();
+                console.log('--sending acceptEmployment request--');
                 $http.post('/api/acceptEmployment', {
                     pendingEmployee: pendingEmployee,
                     gym: gym
-                }, function(response) {
+                }).then(function(response) {
+                    console.log(response);
                     deferred.resolve({
                         success: true
                     });
@@ -58,22 +60,7 @@
                 return deferred.promise;
             },
             deleteEmployment: function(employee, gym) {
-                var deferred = $q.defer();
-                $http.post('/api/deleteEmployment', {
-                    employee: employee,
-                    gym: gym
-                }, function(response) {
-                    deferred.resolve({
-                        success: true
-                    });
-                }, function(error) {
-                    deferred.resolve({
-                        success: false,
-                        error: error.data.reason
-                    });
-                });
-
-                return deferred.promise;
+                return employmentService.deleteEmployment(employee, gym);
             },
             acceptMembership: function(pendingMember, gym) {
                 return employmentService.acceptMembership(pendingMember, gym);

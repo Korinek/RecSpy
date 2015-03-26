@@ -1,12 +1,37 @@
-<div ng-show="!vm.employmentGym" class="container col-centered">
-    You are not currently employed at any registered gym.
-</div>
-
-<div ng-show="vm.employmentGym" class="container">
-    <h3 class="col-centered">{{vm.gym.name}}</h3>
+<div ng-show="!vm.employment" class="container">
+    <div class="col-centered">
+        You are not currently employed at any registered gym.
+    </div>
     </br>
     <ul class="col-md-6 list-group">
-        <li class="list-group-item-active">Checked In</li>
+        <li class="list-group-item active">Possible Employment</li>
+        <li ng-repeat="possibleEmployment in vm.possibleEmployments" class="list-group-item">
+            {{possibleEmployment.name}}
+            <div class="user-action">
+                <a href="" ng-click="vm.requestEmployment(possibleEmployment)">
+                    <img src="/client/images/add.png">
+                </a>
+            </div>
+        </li>
+    </ul>
+    <ul class="col-md-6 list-group">
+        <li class="list-group-item active">Pending Employment</li>
+        <li ng-repeat="pendingEmployment in vm.pendingEmployments" class="list-group-item">
+            {{pendingEmployment.name}}
+            <div class="user-action">
+                <a href="" ng-click="vm.deleteEmployment(pendingEmployment)">
+                    <img src="/client/images/cross.png">
+                </a>
+            </div>
+        </li>
+    </ul>
+</div>
+
+<div ng-show="vm.employment" class="container">
+    <h3 class="col-centered">{{vm.employment.name}}</h3>
+    </br>
+    <ul class="col-md-6 list-group">
+        <li class="list-group-item active">Checked In</li>
         <li ng-repeat="checkedInMember in vm.gym.checkedInMembers" class="list-group-item">
             {{checkedInMember.firstName + ' ' + checkedInMember.lastName}}
             <div class="user-action">
@@ -14,10 +39,10 @@
                     <img src="/client/images/right_arrow.png">
                 </a>
             </div>
-        </li> 
+        </li>
     </ul>
     <ul class="col-md-6 list-group">
-        <li class="list-group-item-active"> Checked Out</li>
+        <li class="list-group-item active">Checked Out</li>
         <li ng-repeat="checkedOutMember in vm.gym.checkedInMembers" class="list-group-item">
             {{checkedOutMember.firstName + ' ' + checkedOutMember.lastName}}
             <div class="user-action">
@@ -26,5 +51,4 @@
                 </a>
             </div>
         </li>
-    </ul
-</div>
+    </ul </div>

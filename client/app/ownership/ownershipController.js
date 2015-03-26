@@ -24,9 +24,6 @@
         vm.createGym = function() {
             ownershipService.createGym(vm.gymName).then(function(response) {
                 if (response.success) {
-                    console.log('--createdGym=success--');
-                    console.log(response);
-                    console.log('-----------------------');
                     vm.gym = response.gym;
                 } else {
                     notifierService.error(response.error);
@@ -60,6 +57,7 @@
             ownershipService.deleteEmployment(employee, vm.gym).then(function(response) {
                 if (response.success) {
                     remove(vm.gym.employees, employee);
+                    remove(vm.gym.pendingEmployees, employee);
                 } else {
                     console.log(response.error);
                 }
