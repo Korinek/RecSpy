@@ -1,6 +1,14 @@
 var User = require('mongoose').model('User'),
     encrypt = require('../utilities/encryption');
 
+exports.getUser = function(userId, callback) {
+    User.findOne({
+        _id: userId
+    }, function(err, user) {
+        callback(null, user);
+    });
+};
+
 exports.createUser = function(req, res, next) {
     var userData = req.body;
     userData.username = userData.username.toLowerCase();

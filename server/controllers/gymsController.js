@@ -4,6 +4,14 @@ var contains = function(list, item) {
     return list.indexOf(item) >= 0;
 };
 
+var sendError = function(res, err) {
+    res.status(400);
+    res.send({
+        reason: err.toString()
+    });
+
+};
+
 function getScrubbedGyms(unscrubbedGyms, currentUser) {
     var scrubbedGyms = [];
     unscrubbedGyms.forEach(function(gym) {
@@ -23,10 +31,7 @@ exports.getAllGyms = function(req, res, next) {
     var currentUser = req.user;
     Gym.find({}, function(err, gyms) {
         if (err) {
-            res.status(400);
-            res.send({
-                reason: err.toString()
-            });
+            sendError(res, err);
         } else {
             res.send(getScrubbedGyms(gyms, currentUser));
         }

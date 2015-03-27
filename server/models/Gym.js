@@ -34,6 +34,18 @@ var gymSchema = mongoose.Schema({
         ref: 'User',
         required: false,
         unique: false
+    },
+    checkedInMembers: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'User',
+        required: false,
+        unique: false
+    },
+    checkedOutMembers: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'User',
+        required: false,
+        unique: false
     }
 });
 

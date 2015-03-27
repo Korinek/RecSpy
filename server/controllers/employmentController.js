@@ -93,10 +93,6 @@ exports.deleteEmployment = function(req, res, next) {
             var isUserEmployee = contains(gym.employees, user._id);
             var isUserPendingEmployee = contains(gym.pendingEmployees, user._id);
 
-            console.log('isUserOwner: ' + isUserOwner);
-            console.log('isUserEmployee: ' + isUserEmployee);
-            console.log('isUserPendingEmployee: ' + isUserPendingEmployee);
-
             if (!isUserOwner && !isUserEmployee && !isUserPendingEmployee) {
                 res.status(404);
                 res.send({
@@ -104,25 +100,10 @@ exports.deleteEmployment = function(req, res, next) {
                 });
             }
 
-            console.log(gym);
-            console.log(user);
             var employeeToRemove = req.body.employee._id;
-            console.log('-employeeToRemove-');
-            console.log(employeeToRemove);
-
-            console.log('-currentEmployees-');
-            console.log(gym.employees);
             var updatedEmployees = gym.employees;
-            remove(updatedEmployees, employeeToRemove);
-            console.log('-updatedEmployees-');
-            console.log(updatedEmployees);
-
-            console.log('-currentPendingEmployees-');
-            console.log(gym.pendingEmployees);
             var updatedPendingEmployees = gym.pendingEmployees;
             remove(updatedPendingEmployees, employeeToRemove);
-            console.log('-updatedPendingEmployees-');
-            console.log(updatedPendingEmployees);
 
             Gym.update({
                 _id: gym._id
@@ -146,18 +127,11 @@ exports.requestEmployment = function(req, res, next) {
     var user = req.user;
     var gymId = req.body.gym._id;
 
-    console.log('--requestEmployment--');
-
     Gym.findOne({
         _id: gymId
     }, function(err, gym) {
-        console.log(gym);
-        console.log(user);
         var updatedPendingEmployees = gym.pendingEmployees;
         updatedPendingEmployees.push(user);
-
-        console.log('*updatedPendingEmployees');
-        console.log(updatedPendingEmployees);
 
         Gym.update({
             _id: gym._id
@@ -182,20 +156,12 @@ exports.acceptEmployment = function(req, res, next) {
         owner: user
     }, function(err, gym) {
         var newEmployee = req.body.pendingEmployee._id;
-        console.log('-newEmployee-');
-        console.log(newEmployee);
 
         var updatedEmployees = gym.employees;
         updatedEmployees.push(newEmployee);
 
         var updatedPendingEmployees = gym.pendingEmployees;
         remove(updatedPendingEmployees, newEmployee);
-
-        console.log('-updatedEmployees-');
-        console.log(updatedEmployees);
-
-        console.log('-updatedPendingEmployees-');
-        console.log(updatedPendingEmployees);
 
         Gym.update({
             owner: user

@@ -47,7 +47,6 @@ var isPendingMember = function(user) {
 };
 
 exports.getMemberships = function(req, res, next) {
-    console.log('getMemberships000');
     var user = req.user;
     var userId = mongoose.Types.ObjectId(user._id);
 
@@ -70,117 +69,70 @@ exports.getMemberships = function(req, res, next) {
 exports.acceptMembership = function(req, res, next) {
     var user = req.user;
     Gym.findOne({
-        _id: req.body.gym._id
+        _id: req.body.gym._id,
+        owner: user._id
     }, function(err, gym) {
         if (err) {
             sendError(res, err);
         }
 
-        console.log('--req.body--');
-        console.log(req.body);
-        console.log('------------');
+        var newMemberId = req.body.pendingMember._id;
+        remove(gym.pendingMembers, newMemberId);
+        gym.members.push(newMemberId);
+        gym.checkedOutMembers.push(newMemberId);
 
-        console.log(gym);
-
-        var newMember = req.body.pendingMember._id;
-
-        if (contains(gym.employees, user) || gym.owner.equals(user._id)) {
-            var updatedMembers = gym.members;
-            updatedMembers.push(newMember);
-
-            var updatedPendingMembers = gym.pendingMembers;
-            remove(updatedPendingMembers, newMember);
-
-            console.log('--updatedMembers--');
-            console.log(updatedMembers);
-            console.log('------------------');
-            console.log('--updatedPendingMembers--');
-            console.log(updatedPendingMembers);
-            console.log('-------------------------');
-
-            Gym.update({
-                _id: gym._id
-            }, {
-                members: updatedMembers,
-                pendingMembers: updatedPendingMembers
-            }, function(err, numberAffected, rawResponse) {
-                if (err) {
-                    sendError(res, err);
-                }
-                sendSuccess(res);
-            });
-
-        } else {
-            console.log('acceptMembership permission denied');
-            res.status(403);
-            res.send({
-                reason: 'Only an employee or owner of the gym may accept a membership request.'
-            });
-        }
+        Gym.update({
+            _id: gym._id
+        }, {
+            members: gym.members,
+            pendingMembers: gym.pendingMembers,
+            checkedOutMembers: gym.checkedOutMembers
+        }, function(err, numberAffected, rawResponse) {
+            if (err) {
+                sendError(res, err);
+            }
+            sendSuccess(res);
+        });
     });
 };
 
 exports.deleteMembership = function(req, res, next) {
     var user = req.user;
+    var userId = user._id;
     Gym.findOne({
-        _id: req.body.gym._id
+        _id: req.body.gym._id,
+        $or: [{
+            owner: userId
+        }, {
+            employees: userId
+        }, {
+            members: userId
+        }, {
+            pendingMembers: userId
+        }]
     }, function(err, gym) {
         if (err) {
             sendError(res, err);
         }
-        var isUserMember = user._id.equals(req.body.member._id);
-        var isUserOwner = gym.owner.equals(user._id);
-        var isUserEmployee = gym.contains(gym.employees, user._id);
+        var memberToRemove = req.body.member._id;
+        remove(gym.members, memberToRemove);
+        remove(gym.pendingMembers, memberToRemove);
+        remove(gym.checkedInMembers, memberToRemove);
+        remove(gym.checkedOutMembers, memberToRemove);
 
-        if (!isUserMember && !isUserOwner && !isUserEmployee) {
-            res.status(403);
-            res.send({
-                reason: 'Only the owner/employee of the gym or the user themself my remove a membership.'
-            });
-
-        } else {
-
-            var indexOfMember = gym.members.indexOf(user._id);
-            if (indexOfMember >= 0) {
-
-                var updatedMembers = gym.members;
-                updatedMembers.splice(indexOfMember, 1);
-                console.log('--updatedMembers--');
-                console.log(updatedMembers);
-                console.log('------------------');
-
-                Gym.update({
-                    _id: gym._id
-                }, {
-                    members: updatedMembers
-                }, function(err, numberAffected, rawResponse) {
-                    if (err) {
-                        sendError(res, err);
-                    }
-                    sendSuccess(res);
-                });
-            } else {
-
-                var indexOfPendingMember = gym.pendingMembers.indexOf(user._id);
-                if (indexOfPendingMember >= 0) {
-                    var updatedPendingMembers = gym.pendingMembers;
-                    updatedPendingMembers.splice(indexOfPendingMember, 1);
-
-                    Gym.update({
-                        _id: gym._id
-                    }, {
-                        pendingMembers: updatedPendingMembers
-                    }, function(err, numberAffected, rawResponse) {
-                        if (err) {
-                            sendError(res, err);
-                        }
-                        sendSuccess(res);
-                    });
-                } else {
-                    sendFailure(res);
-                }
+        Gym.update({
+            _id: gym._id
+        }, {
+            members: gym.members,
+            pendingMembers: gym.pendingMembers,
+            checkedInMembers: gym.checkedInMembers,
+            checkedOutMembers: gym.checkedOutMembers
+        }, function(err, numberAffected, rawResponse) {
+            if (err) {
+                sendError(res, err);
             }
-        }
+            sendSuccess(res);
+        });
     });
 };
 
@@ -193,13 +145,12 @@ exports.requestMembership = function(req, res, next) {
         if (err) {
             sendFailure(res);
         }
-        var pendingMembers = gym.pendingMembers;
-        pendingMembers.push(user);
+        gym.pendingMembers.push(user);
 
         Gym.update({
-            name: gym.name
+            _id: gym._id
         }, {
-            pendingMembers: pendingMembers
+            pendingMembers: gym.pendingMembers
         }, function(err, numberAffected, rawResponse) {
             if (err) {
                 sendError(res, err);

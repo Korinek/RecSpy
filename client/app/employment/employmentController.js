@@ -10,10 +10,8 @@
 
     var EmploymentController = function(employmentService, identityService) {
         var vm = this;
-
         employmentService.searchEmployment().then(function(response) {
             if (response.success) {
-                console.log(response);
                 vm.employment = response.employment;
                 vm.pendingEmployments = response.pendingEmployments;
                 vm.possibleEmployments = response.possibleEmployments;
@@ -23,8 +21,6 @@
         });
 
         vm.requestEmployment = function(gym) {
-            console.log('requesting employment with ');
-            console.log(gym);
             employmentService.requestEmployment(gym).then(function(response) {
                 if (response.success) {
                     remove(vm.possibleEmployments, gym);
@@ -46,6 +42,16 @@
                         console.log(response.error);
                     }
                 });
+        };
+
+        vm.checkInMember = function(member) {
+            remove(vm.checkedOutMembers, member);
+            vm.chckedInMembers.push(member);
+        };
+
+        vm.checkOutMember = function(member) {
+            remove(vm.checkedInMembers, member);
+            vm.checkedOutMembers.push(member);
         };
     };
 

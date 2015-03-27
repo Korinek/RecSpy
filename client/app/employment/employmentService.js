@@ -27,9 +27,6 @@
             searchEmployment: function() {
                 var deferred = $q.defer();
                 $http.get('/api/employment').then(function(response) {
-                    console.log('--searchEmployment--');
-                    console.log(response);
-                    console.log('--------------------');
                     deferred.resolve({
                         success: true,
                         employment: response.data.employment,
