@@ -5,7 +5,7 @@
         </li>
         <li ng-repeat="gym in vm.gyms" class="list-group-item">
             {{gym.name}}
-            <div class="user-action">
+            <div class="pull-right">
                 <a href="" ng-show="!gym.isCurrentUserMember && !gym.isCurrentUserPendingMember"
                 ng-click="vm.requestMembership(gym)">
                     <img src="/client/images/add.png">

@@ -3,7 +3,7 @@
         <li class="list-group-item active">Pending Memberships</li>
         <li ng-repeat="pendingMembership in vm.pendingMemberships" class="list-group-item">
             {{pendingMembership.name}}
-            <a href="" ng-click="vm.deleteMembership(pendingMembership)" class="user-action">
+            <a href="" ng-click="vm.deleteMembership(pendingMembership)" class="pull-right">
                 <img src="/client/images/cross.png">
             </a>
         </li>
@@ -12,7 +12,7 @@
         <li class="list-group-item active"> Current Memberships</li>
         <li ng-repeat="currentMembership in vm.currentMemberships" class="list-group-item">
             {{currentMembership.name}}
-            <a href="" ng-click="vm.deleteMembership(currentMembership)" class="user-action">
+            <a href="" ng-click="vm.deleteMembership(currentMembership)" class="pull-right">
                 <img src="/client/images/cross.png">
             </a>
         </li>

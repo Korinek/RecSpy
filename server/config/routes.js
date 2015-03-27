@@ -30,6 +30,8 @@ module.exports = function(app, config) {
     app.post('/api/deleteEmployment', auth.requiresLogin, employmentController.deleteEmployment);
     app.post('/api/requestEmployment', auth.requiresLogin, employmentController.requestEmployment);
     app.post('/api/acceptEmployment', auth.requiresLogin, employmentController.acceptEmployment);
+    app.post('/api/checkInMember', auth.requiresLogin, employmentController.checkInMember);
+    app.post('/api/checkOutMember', auth.requiresLogin, employmentController.checkOutMember);
 
     app.get('/api/gyms', auth.requiresLogin, gymsController.getAllGyms);
     app.get('/api/dashboard', auth.requiresLogin, dashboardController.getGymStatistics);

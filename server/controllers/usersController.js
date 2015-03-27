@@ -1,11 +1,15 @@
 var User = require('mongoose').model('User'),
     encrypt = require('../utilities/encryption');
 
-exports.getUser = function(userId, callback) {
+exports.getUserInfo = function(userId, callback) {
     User.findOne({
         _id: userId
     }, function(err, user) {
-        callback(null, user);
+        callback(null, {
+            _id: user._id,
+            firstName: user.firstName,
+            lastName: user.lastName
+        });
     });
 };
 

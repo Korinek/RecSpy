@@ -1,6 +1,19 @@
 (function() {
     'use strict';
 
+    var resolveSuccess = function(deferred) {
+        deferred.resolve({
+            success: true
+        });
+    };
+
+    var resolveError = function(deferred, error) {
+        deferred.resolve({
+            success: false,
+            error: error.data.reason
+        });
+    };
+
     var employmentService = function($http, $q, membershipService) {
         return {
             acceptMembership: function(pendingMember, gym) {
@@ -9,14 +22,9 @@
                     pendingMember: pendingMember,
                     gym: gym
                 }).then(function(response) {
-                    deferred.resolve({
-                        success: true
-                    });
+                    resolveSuccess(deferred);
                 }, function(error) {
-                    deferred.resolve({
-                        success: false,
-                        error: error.data.reason
-                    });
+                    resolveError(deferred, error);
                 });
 
                 return deferred.promise;
@@ -34,10 +42,7 @@
                         possibleEmployments: response.data.possibleEmployments
                     });
                 }, function(error) {
-                    deferred.resolve({
-                        success: false,
-                        error: error.data.reason
-                    });
+                    resolveError(deferred, error);
                 });
                 return deferred.promise;
             },
@@ -46,15 +51,9 @@
                 $http.post('/api/requestEmployment', {
                     gym: gym
                 }).then(function(response) {
-                    console.log(response);
-                    deferred.resolve({
-                        success: true
-                    });
+                    resolveSuccess(deferred);
                 }, function(error) {
-                    deferred.resolve({
-                        success: false,
-                        error: error.data.reason
-                    });
+                    resolveError(deferred, error);
                 });
                 return deferred.promise;
             },
@@ -64,15 +63,33 @@
                     employee: employee,
                     gym: gym
                 }).then(function(response) {
-                    console.log(response);
-                    deferred.resolve({
-                        success: true
-                    });
+                    resolveSuccess(deferred);
                 }, function(error) {
-                    deferred.resolve({
-                        success: false,
-                        error: error.data.reason
-                    });
+                    resolveError(deferred, error);
+                });
+                return deferred.promise;
+            },
+            checkInMember: function(gym, member) {
+                var deferred = $q.defer();
+                $http.post('api/checkInMember', {
+                    gym: gym,
+                    member: member
+                }).then(function(response) {
+                    resolveSuccess(deferred);
+                }, function(error) {
+                    resolveError(deferred, error);
+                });
+                return deferred.promise;
+            },
+            checkOutMember: function(gym, member) {
+                var deferred = $q.defer();
+                $http.post('api/checkOutMember', {
+                    gym: gym,
+                    member: member
+                }).then(function(response) {
+                    resolveSuccess(deferred);
+                }, function(error) {
+                    resolveError(deferred, error);
                 });
                 return deferred.promise;
             }

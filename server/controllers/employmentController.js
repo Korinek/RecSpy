@@ -1,6 +1,8 @@
 var mongoose = require('mongoose'),
-    User = mongoose.model('User'),
-    Gym = mongoose.model('Gym');
+    Usej = mongoose.model('User'),
+    Gym = mongoose.model('Gym'),
+    usersController = require('./usersController'),
+    async = require('async');
 
 var remove = function(collection, item) {
     var index = collection.indexOf(item);
@@ -71,11 +73,45 @@ exports.getEmployment = function(req, res, next) {
             var pendingEmployments = allGyms.filter(isPendingEmployee(userId));
             var possibleEmployments = getPossibleEmployments(memberships, employment, pendingEmployments);
 
-            res.send({
-                employment: employment,
-                pendingEmployments: pendingEmployments,
-                possibleEmployments: possibleEmployments
-            });
+            if (employment) {
+                var mapCheckedOutMembers = function(callback) {
+                    async.map(employment.checkedOutMembers, usersController.getUserInfo, function(err, results) {
+                        callback(null, results);
+                    });
+                };
+
+                var mapCheckedInMembers = function(callback) {
+                    async.map(employment.checkedInMembers, usersController.getUserInfo, function(err, results) {
+                        callback(null, results);
+                    });
+                };
+
+                var sendEmployment = function(err, results) {
+                    if (err) {
+                        sendError(err);
+                    } else {
+                        var payload = {
+                            _id: employment._id,
+                            name: employment.name,
+                            checkedOutMembers: results[0],
+                            checkedInMembers: results[1]
+                        };
+
+                        res.send({
+                            employment: payload
+                        });
+                    }
+                };
+
+                async.series([mapCheckedOutMembers, mapCheckedInMembers], sendEmployment);
+
+            } else {
+                res.send({
+                    pendingEmployments: pendingEmployments,
+                    possibleEmployments: possibleEmployments
+                });
+
+            }
         }
     });
 };
@@ -153,6 +189,7 @@ exports.acceptEmployment = function(req, res, next) {
     var user = req.user;
     var gymId = req.body.gym._id;
     Gym.findOne({
+        _id: gymId,
         owner: user
     }, function(err, gym) {
         var newEmployee = req.body.pendingEmployee._id;
@@ -177,5 +214,73 @@ exports.acceptEmployment = function(req, res, next) {
                 });
             }
         });
+    });
+};
+
+exports.checkInMember = function(req, res, next) {
+    var user = req.user;
+    var userId = user._id;
+    var gymId = req.body.gym._id;
+    var memberToCheckIn = req.body.member._id;
+    Gym.findOne({
+        _id: gymId,
+        employees: userId,
+        members: memberToCheckIn
+    }, function(err, gym) {
+        if (err) {
+            sendError(res, err);
+        } else {
+            remove(gym.checkedOutMembers, memberToCheckIn);
+            gym.checkedInMembers.push(memberToCheckIn);
+
+            Gym.update({
+                _id: gym._id
+            }, {
+                checkedOutMembers: gym.checkedOutMembers,
+                checkedInMembers: gym.checkedInMembers
+            }, function(err) {
+                if (err) {
+                    sendError(res, err);
+                } else {
+                    res.send({
+                        success: true
+                    });
+                }
+            });
+        }
+    });
+};
+
+exports.checkOutMember = function(req, res, next) {
+    var user = req.user;
+    var userId = user._id;
+    var gymId = req.bod.gym._id;
+    var memberToCheckOut = req.body.member._id;
+    Gym.findOne({
+        _id: gymId,
+        employees: userId,
+        members: memberToCheckOut
+    }, function(err, gym) {
+        if (err) {
+            sendError(res, err);
+        } else {
+            remove(gym.checkedInMembers, memberToCheckOut);
+            gym.checkedOutMembers.push(memberToCheckOut);
+
+            Gym.update({
+                _id: gym._id
+            }, {
+                checkedOutMembers: gym.checkedOutMembers,
+                checkedInMembers: gym.checkedInMembers
+            }, function(err) {
+                if (err) {
+                    sendError(res, err);
+                } else {
+                    res.send({
+                        success: true
+                    });
+                }
+            });
+        }
     });
 };

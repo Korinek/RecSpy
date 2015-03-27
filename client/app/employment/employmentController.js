@@ -45,13 +45,27 @@
         };
 
         vm.checkInMember = function(member) {
-            remove(vm.checkedOutMembers, member);
-            vm.chckedInMembers.push(member);
+            employmentService.checkInMember(vm.employment, member)
+                .then(function(response) {
+                    if (response.success) {
+                        remove(vm.employment.checkedOutMembers, member);
+                        vm.employment.checkedInMembers.push(member);
+                    } else {
+                        console.log(response.error);
+                    }
+                });
         };
 
         vm.checkOutMember = function(member) {
-            remove(vm.checkedInMembers, member);
-            vm.checkedOutMembers.push(member);
+            employmentService.checkOutMember(vm.employment, member)
+                .then(function(response) {
+                    if (response.success) {
+                        remove(vm.employment.checkedInMembers, member);
+                        vm.employment.checkedOutMembers.push(member);
+                    } else {
+                        console.log(response.error);
+                    }
+                });
         };
     };
 
