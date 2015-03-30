@@ -46,6 +46,12 @@ var gymSchema = mongoose.Schema({
         ref: 'User',
         required: false,
         unique: false
+    },
+    sessions: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'GymSession',
+        required: false,
+        unique: false
     }
 });
 
