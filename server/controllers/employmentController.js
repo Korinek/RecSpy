@@ -1,5 +1,5 @@
 var mongoose = require('mongoose'),
-    Usej = mongoose.model('User'),
+    User = mongoose.model('User'),
     Gym = mongoose.model('Gym'),
     usersController = require('./usersController'),
     async = require('async');
@@ -233,11 +233,20 @@ exports.checkInMember = function(req, res, next) {
             remove(gym.checkedOutMembers, memberToCheckIn);
             gym.checkedInMembers.push(memberToCheckIn);
 
+            var gymSession = {
+                userId: memberToCheckIn,
+                checkIn: Date.now(),
+                checkOut: null
+            }
+
+            gym.sessions.push(gymSession);
+
             Gym.update({
                 _id: gym._id
             }, {
                 checkedOutMembers: gym.checkedOutMembers,
-                checkedInMembers: gym.checkedInMembers
+                checkedInMembers: gym.checkedInMembers,
+                sessions: gym.sessions
             }, function(err) {
                 if (err) {
                     sendError(res, err);
@@ -254,7 +263,7 @@ exports.checkInMember = function(req, res, next) {
 exports.checkOutMember = function(req, res, next) {
     var user = req.user;
     var userId = user._id;
-    var gymId = req.bod.gym._id;
+    var gymId = req.body.gym._id;
     var memberToCheckOut = req.body.member._id;
     Gym.findOne({
         _id: gymId,
@@ -267,11 +276,21 @@ exports.checkOutMember = function(req, res, next) {
             remove(gym.checkedInMembers, memberToCheckOut);
             gym.checkedOutMembers.push(memberToCheckOut);
 
+            var currentSession;
+            gym.sessions.forEach(function(session) {
+                if (session.userId.equals(memberToCheckOut) && !session.checkOut) {
+                    currentSession = session;
+                }
+            });
+
+            currentSession.checkOut = Date.now();
+
             Gym.update({
                 _id: gym._id
             }, {
                 checkedOutMembers: gym.checkedOutMembers,
-                checkedInMembers: gym.checkedInMembers
+                checkedInMembers: gym.checkedInMembers,
+                sessions: gym.sessions
             }, function(err) {
                 if (err) {
                     sendError(res, err);

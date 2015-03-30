@@ -47,12 +47,11 @@ var gymSchema = mongoose.Schema({
         required: false,
         unique: false
     },
-    sessions: {
-        type: [mongoose.Schema.Types.ObjectId],
-        ref: 'GymSession',
-        required: false,
-        unique: false
-    }
+    sessions: [{
+        userId: mongoose.Schema.Types.ObjectId,
+        checkIn: Date,
+        checkOut: Date
+    }]
 });
 
 module.exports = mongoose.model('Gym', gymSchema);
