@@ -6,10 +6,17 @@
             getGymStatistics: function() {
                 var deferred = $q.defer();
                 $http.get('/api/dashboard').then(function(response) {
-                    deferred.resolve(true);
+                    console.log(response);
+                    deferred.resolve({
+                        success: true,
+                        memberships: response.data.memberships
+                    });
                 }, function(error) {
                     console.log(error);
-                    deferred.resolve(false);
+                    deferred.resolve({
+                        success: false,
+                        error: error.data.reason
+                    });
                 });
                 return deferred.promise;
             }

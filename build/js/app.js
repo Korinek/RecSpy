@@ -251,10 +251,46 @@
 
     var DashboardController = function(dashboardService, notifierService, requestErrorService) {
         var vm = this;
-        vm.message = '';
-        dashboardService.getGymStatistics().then(function(success) {
-            if (success) {
-                console.log('Successful Get Message');
+        vm.memberships = [];
+
+        vm.currentIndex = 0;
+
+        vm.displayGymAtCurrentIndex = function() {
+            vm.currentlyDisplayedGym = vm.memberships[vm.currentIndex];
+            console.log('--currentlyDisplayedGym--');
+            console.log(vm.currentlyDisplayedGym);
+            console.log('-------------------------');
+        };
+
+        vm.moveLeft = function() {
+            if (vm.currentIndex <= 0) {
+                vm.currentIndex = vm.memberships.length - 1;
+            } else {
+                vm.currentIndex--;
+            }
+
+            vm.displayGymAtCurrentIndex();
+        };
+
+        vm.moveRight = function() {
+            if (vm.currentIndex >= vm.memberships.length - 1) {
+                vm.currentIndex = 0;
+            } else {
+                vm.currentIndex++;
+            }
+
+            vm.displayGymAtCurrentIndex();
+        };
+
+        dashboardService.getGymStatistics().then(function(response) {
+            if (response.success) {
+                vm.memberships = response.memberships;
+
+                if (vm.memberships.length > 0) {
+                    vm.displayGymAtCurrentIndex();
+                } else {
+                    vm.currentlyDisplayedGym = null;
+                }
             } else {
                 requestErrorService.handleSessionExpired();
             }
@@ -273,10 +309,17 @@
             getGymStatistics: function() {
                 var deferred = $q.defer();
                 $http.get('/api/dashboard').then(function(response) {
-                    deferred.resolve(true);
+                    console.log(response);
+                    deferred.resolve({
+                        success: true,
+                        memberships: response.data.memberships
+                    });
                 }, function(error) {
                     console.log(error);
-                    deferred.resolve(false);
+                    deferred.resolve({
+                        success: false,
+                        error: error.data.reason
+                    });
                 });
                 return deferred.promise;
             }
@@ -810,7 +853,7 @@
 
 angular.module("app").run(["$templateCache", function($templateCache) {$templateCache.put("app/account/loginTemplate.html","<div class=\"nav navbar-nav navbar-right\" ng-hide=vm.identity.isAuthenticated()><li><a href=/signup>Sign Up</a></li></div><div class=navbar-right><form class=navbar-form ng-hide=vm.identity.isAuthenticated()><div class=form-group><input class=form-control placeholder=Username ng-model=vm.username )=\"\"></div><div class=form-group><input class=form-control type=password placeholder=Password ng-model=vm.password></div><button class=\"btn btn-primary\" ng-click=\"vm.signin(vm.username, vm.password)\">Sign In</button></form><ul ng-show=vm.identity.isAuthenticated() class=\"nav navbar-nav navbar-right\"><li class=dropdown><a class=dropdown-toggle href data-toggle=dropdown>{{vm.identity.currentUser.firstName + \" \" + identity.currentUser.lastName}} <b class=caret></b></a><ul class=dropdown-menu><li><a href=/memberships>Memberships</a></li><li><a href=/employment>Employment</a></li><li><a href=/ownership>Ownership</a></li><li><a href ng-click=vm.signout()>Sign Out</a></li></ul></li></ul></div>");
 $templateCache.put("app/account/signup.html","<div class=container><div class=\"well foo\"><form name=signupForm class=form-horizontal><fieldset><legend>New User Information</legend><div class=form-group><label for=username class=\"col-md-2 control-label\">Username</label><div class=col-md-10><input name=username type=text placeholder=Username ng-model=vm.username required class=form-control></div></div><div class=form-group><label for=password class=\"col-md-2 control-label\">Password</label><div class=col-md-10><input name=password type=password placeholder=Password ng-model=vm.password required class=form-control></div></div><div class=form-group><label for=firstName class=\"col-md-2 control-label\">First name</label><div class=col-md-10><input name=firstName type=text placeholder=\"First Name\" ng-model=vm.firstName required class=form-control></div></div><div class=form-group><label for=lastName class=\"col-md-2 control-label\">Last Name</label><div class=col-md-10><input name=lastName type=lastName placeholder=\"Last Name\" ng-model=vm.lastName required class=form-control></div></div><div class=form-group><div class=\"col-md-10 col-md-offset-2\"><div class=pull-right><button ng-click=vm.signup() ng-disabled=signupForm.$invalid class=\"btn btn-primary\">Submit</button> &nbsp;<a href=\"/\" class=\"btn btn-default\">Cancel</a></div></div></div></fieldset></form></div></div>");
-$templateCache.put("app/dashboard/dashboard.html","<div>Hello From Dashboard Controller</div>");
+$templateCache.put("app/dashboard/dashboard.html","<div class=container><div ng-repeat=\"gym in vm.memberships\" ng-show=\"vm.currentlyDisplayedGym === gym\" class=col-centered><a href ng-click=vm.moveLeft() ng-show=\"vm.memberships.length > 1\" class=nav-arrow-left><img src=/client/images/left_arrow.png></a><h3 class=dashboard-gym-title>{{gym.name}}</h3><a href ng-click=vm.moveRight() ng-show=\"vm.memberships.length > 1\" class=nav-arrow-right><img src=/client/images/right_arrow.png></a></div></div>");
 $templateCache.put("app/employment/employment.html","<div ng-show=!vm.employment class=container><div class=col-centered>You are not currently employed at any registered gym.</div><br><ul class=\"col-md-6 list-group\"><li class=\"list-group-item active\">Possible Employment</li><li ng-repeat=\"possibleEmployment in vm.possibleEmployments\" class=list-group-item>{{possibleEmployment.name}}<div class=user-action><a href ng-click=vm.requestEmployment(possibleEmployment)><img src=/client/images/add.png></a></div></li></ul><ul class=\"col-md-6 list-group\"><li class=\"list-group-item active\">Pending Employment</li><li ng-repeat=\"pendingEmployment in vm.pendingEmployments\" class=list-group-item>{{pendingEmployment.name}}<div class=user-action><a href ng-click=vm.deleteEmployment(pendingEmployment)><img src=/client/images/cross.png></a></div></li></ul></div><div ng-show=vm.employment class=container><h3 class=col-centered>{{vm.employment.name}}</h3><br><ul class=\"col-md-6 list-group\"><li class=\"list-group-item active\">Checked In</li><li ng-repeat=\"checkedInMember in vm.employment.checkedInMembers\" class=list-group-item>{{checkedInMember.firstName + \' \' + checkedInMember.lastName}}<div class=pull-right><a href ng-click=vm.checkOutMember(checkedInMember)><img src=/client/images/right_arrow.png></a></div></li></ul><ul class=\"col-md-6 list-group\"><li class=\"list-group-item active\">Checked Out</li><li ng-repeat=\"checkedOutMember in vm.employment.checkedOutMembers\" class=list-group-item><div class=pull-left><a href ng-click=vm.checkInMember(checkedOutMember)><img src=/client/images/left_arrow.png></a></div>{{checkedOutMember.firstName + \' \' + checkedOutMember.lastName}}</li></ul></div>");
 $templateCache.put("app/gyms/gyms.html","<div class=container><ul class=\"list-group col-centered col-md-6\"><li class=\"list-group-item active\">Gyms</li><li ng-repeat=\"gym in vm.gyms\" class=list-group-item>{{gym.name}}<div class=pull-right><a href ng-show=\"!gym.isCurrentUserMember && !gym.isCurrentUserPendingMember\" ng-click=vm.requestMembership(gym)><img src=/client/images/add.png></a> <a href=/memberships ng-show=gym.isCurrentUserPendingMember><img src=/client/images/question.png></a> <a href=/memberships ng-show=gym.isCurrentUserMember><img src=/client/images/check.png></a></div></li></ul></div>");
 $templateCache.put("app/main/main.html","");

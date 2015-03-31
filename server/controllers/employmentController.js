@@ -237,7 +237,7 @@ exports.checkInMember = function(req, res, next) {
                 userId: memberToCheckIn,
                 checkIn: Date.now(),
                 checkOut: null
-            }
+            };
 
             gym.sessions.push(gymSession);
 
