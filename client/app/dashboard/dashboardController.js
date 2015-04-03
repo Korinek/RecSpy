@@ -1,9 +1,19 @@
 (function() {
     'use strict';
 
+    var generatePercentages = function() {
+        var percentages = [];
+        for (var i = 1; i <= 100; i++) {
+            percentages.push(i);
+        }
+        return percentages;
+    };
+
     var DashboardController = function(dashboardService, notifierService, requestErrorService) {
         var vm = this;
         vm.memberships = [];
+        vm.percentages = generatePercentages();
+        vm.currentPercentage = 71;
 
         vm.currentIndex = 0;
 
