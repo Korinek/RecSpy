@@ -2,7 +2,8 @@ var mongoose = require('mongoose'),
     User = mongoose.model('User'),
     Gym = mongoose.model('Gym'),
     usersController = require('./usersController'),
-    async = require('async');
+    async = require('async'),
+    sockets = require('../config/sockets');
 
 var remove = function(collection, item) {
     var index = collection.indexOf(item);
@@ -251,6 +252,7 @@ exports.checkInMember = function(req, res, next) {
                 if (err) {
                     sendError(res, err);
                 } else {
+                    sockets.emitPopulationPercentage(gym);
                     res.send({
                         success: true
                     });
@@ -295,6 +297,7 @@ exports.checkOutMember = function(req, res, next) {
                 if (err) {
                     sendError(res, err);
                 } else {
+                    sockets.emitPopulationPercentage(gym);
                     res.send({
                         success: true
                     });

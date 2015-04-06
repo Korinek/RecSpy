@@ -12,9 +12,6 @@
         var vm = this;
         ownershipService.getOwnedGym().then(function(response) {
             if (response.success) {
-                console.log('--getOwnedGym=success--');
-                console.log(response);
-                console.log('-----------------------');
                 vm.gym = response.gym;
             } else {
                 requestErrorService.handleSessionExpired();
@@ -22,7 +19,7 @@
         });
 
         vm.createGym = function() {
-            ownershipService.createGym(vm.gymName).then(function(response) {
+            ownershipService.createGym(vm.gymName, vm.gymMaxCapacity).then(function(response) {
                 if (response.success) {
                     vm.gym = response.gym;
                 } else {

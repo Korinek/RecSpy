@@ -51,7 +51,12 @@ var gymSchema = mongoose.Schema({
         userId: mongoose.Schema.Types.ObjectId,
         checkIn: Date,
         checkOut: Date
-    }]
+    }],
+    maxCapacity: {
+        type: Number,
+        required: true,
+        min: 0
+    }
 });
 
 module.exports = mongoose.model('Gym', gymSchema);

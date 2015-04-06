@@ -12,6 +12,13 @@
                 </div>
             </div>
             <div class="form-group">
+                <label for="gymMaxCapacity" class="col-md-2 control-label">Max Capacity</label>
+                <div class="col-md-10">
+                    <input name="gymMaxCapacity" type="text" placeholder="Max Capacity" ng-model="vm.gymMaxCapacity"
+                    required="required" class="form-control" />
+                </div>
+            </div>
+            <div class="form-group">
                 <div class="col-md-10 col-md-offset-2">
                     <div class="pull-right">
                         <button ng-click="vm.createGym()" ng-disabled="createGymForm.$invalid" class="btn btn-primary">Create</button>

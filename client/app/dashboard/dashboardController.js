@@ -9,16 +9,28 @@
         return percentages;
     };
 
+    var setupPopulationWatches = function(socket, gyms) {
+        gyms.forEach(function(gym) {
+            console.log('Setting up socket on: ' + gym.name);
+            socket.on(gym.name, function(data) {
+                console.log(gym.name + ' pop percent changed to ' + data.currentPopulationPercentage);
+                gym.currentPopulationPercentage = data.currentPopulationPercentage;
+            });
+        });
+    };
+
     var DashboardController = function(dashboardService, notifierService, requestErrorService) {
         var vm = this;
         vm.memberships = [];
         vm.percentages = generatePercentages();
-        vm.currentPercentage = 71;
-
+        vm.currentPercentage = 0;
         vm.currentIndex = 0;
+
+        var socket = io.connect('http://localhost:3030');
 
         vm.displayGymAtCurrentIndex = function() {
             vm.currentlyDisplayedGym = vm.memberships[vm.currentIndex];
+            vm.currentPercentage = vm.currentlyDisplayedGym.currentPopulationPercentage;
             console.log('--currentlyDisplayedGym--');
             console.log(vm.currentlyDisplayedGym);
             console.log('-------------------------');
@@ -47,6 +59,8 @@
         dashboardService.getGymStatistics().then(function(response) {
             if (response.success) {
                 vm.memberships = response.memberships;
+                console.log(vm.memberships);
+                setupPopulationWatches(socket, vm.memberships);
 
                 if (vm.memberships.length > 0) {
                     vm.displayGymAtCurrentIndex();

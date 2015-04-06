@@ -3,7 +3,6 @@
 
     var MainController = function() {
         var vm = this;
-        vm.myVar = 'Hello From Main Controller';
     };
 
     MainController.$inject = [];

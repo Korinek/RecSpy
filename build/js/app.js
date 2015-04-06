@@ -257,16 +257,28 @@
         return percentages;
     };
 
+    var setupPopulationWatches = function(socket, gyms) {
+        gyms.forEach(function(gym) {
+            console.log('Setting up socket on: ' + gym.name);
+            socket.on(gym.name, function(data) {
+                console.log(gym.name + ' pop percent changed to ' + data.currentPopulationPercentage);
+                gym.currentPopulationPercentage = data.currentPopulationPercentage;
+            });
+        });
+    };
+
     var DashboardController = function(dashboardService, notifierService, requestErrorService) {
         var vm = this;
         vm.memberships = [];
         vm.percentages = generatePercentages();
-        vm.currentPercentage = 71;
-
+        vm.currentPercentage = 0;
         vm.currentIndex = 0;
+
+        var socket = io.connect('http://localhost:3030');
 
         vm.displayGymAtCurrentIndex = function() {
             vm.currentlyDisplayedGym = vm.memberships[vm.currentIndex];
+            vm.currentPercentage = vm.currentlyDisplayedGym.currentPopulationPercentage;
             console.log('--currentlyDisplayedGym--');
             console.log(vm.currentlyDisplayedGym);
             console.log('-------------------------');
@@ -295,6 +307,8 @@
         dashboardService.getGymStatistics().then(function(response) {
             if (response.success) {
                 vm.memberships = response.memberships;
+                console.log(vm.memberships);
+                setupPopulationWatches(socket, vm.memberships);
 
                 if (vm.memberships.length > 0) {
                     vm.displayGymAtCurrentIndex();
@@ -577,7 +591,6 @@
 
     var MainController = function() {
         var vm = this;
-        vm.myVar = 'Hello From Main Controller';
     };
 
     MainController.$inject = [];
@@ -716,9 +729,6 @@
         var vm = this;
         ownershipService.getOwnedGym().then(function(response) {
             if (response.success) {
-                console.log('--getOwnedGym=success--');
-                console.log(response);
-                console.log('-----------------------');
                 vm.gym = response.gym;
             } else {
                 requestErrorService.handleSessionExpired();
@@ -726,7 +736,7 @@
         });
 
         vm.createGym = function() {
-            ownershipService.createGym(vm.gymName).then(function(response) {
+            ownershipService.createGym(vm.gymName, vm.gymMaxCapacity).then(function(response) {
                 if (response.success) {
                     vm.gym = response.gym;
                 } else {
@@ -806,10 +816,11 @@
                 });
                 return deferred.promise;
             },
-            createGym: function(gymName) {
+            createGym: function(gymName, gymMaxCapacity) {
                 var deferred = $q.defer();
                 $http.post('/api/ownership', {
-                        gymName: gymName
+                        gymName: gymName,
+                        maxCapacity: gymMaxCapacity
                     })
                     .then(function(response) {
                         deferred.resolve({
@@ -869,4 +880,4 @@ $templateCache.put("app/gyms/gyms.html","<div class=container><ul class=\"list-g
 $templateCache.put("app/main/main.html","");
 $templateCache.put("app/memberships/memberships.html","<div class=container><ul class=\"col-md-6 list-group\"><li class=\"list-group-item active\">Pending Memberships</li><li ng-repeat=\"pendingMembership in vm.pendingMemberships\" class=list-group-item>{{pendingMembership.name}} <a href ng-click=vm.deleteMembership(pendingMembership) class=pull-right><img src=/client/images/cross.png></a></li></ul><ul class=\"col-md-6 list-group\"><li class=\"list-group-item active\">Current Memberships</li><li ng-repeat=\"currentMembership in vm.currentMemberships\" class=list-group-item>{{currentMembership.name}} <a href ng-click=vm.deleteMembership(currentMembership) class=pull-right><img src=/client/images/cross.png></a></li></ul></div>");
 $templateCache.put("app/navbar/navbarTemplate.html","<div class=\"navbar navbar-inverse navbar-fixed-top\"><div class=container><div class=navbar-header><a class=navbar-brand href=\"/\">RecSpy</a></div><div class=\"navbar-collapse collapse\"><ul class=\"nav navbar-nav navbar-left\"><li ng-show=identity.isAuthenticated()><a href=/dashboard>Dashboard</a></li><li ng-show=identity.isAuthenticated()><a href=/gyms>Gyms</a></li></ul><login-directive></login-directive></div></div></div>");
-$templateCache.put("app/ownership/ownership.html","<div ng-show=!vm.gym class=container>You do not currently own a gym.<div class=well><form name=createGymForm class=form-horizontal><legend>New Gym Information</legend><div class=form-group><label for=gymName class=\"col-md-2 control-label\">Gym Name</label><div class=col-md-10><input name=gymName type=text placeholder=\"Gym Name\" ng-model=vm.gymName required class=form-control></div></div><div class=form-group><div class=\"col-md-10 col-md-offset-2\"><div class=pull-right><button ng-click=vm.createGym() ng-disabled=createGymForm.$invalid class=\"btn btn-primary\">Create</button> &nbsp;<a href=\"/\" class=\"btn btn-default\">Cancel</a></div></div></div></form></div></div><div ng-show=vm.gym class=container><h3 class=col-centered>{{vm.gym.name}}</h3><br><ul class=\"col-md-6 list-group\"><li class=\"list-group-item active\">Members</li><li ng-repeat=\"pendingMember in vm.gym.pendingMembers\" class=list-group-item>{{pendingMember.firstName + \' \' + pendingMember.lastName}} (pending)<div class=pull-right><a href ng-click=vm.deleteMembership(pendingMember)><img src=/client/images/cross.png></a> <a href ng-click=vm.acceptMembership(pendingMember)><img src=/client/images/add.png></a></div></li><li ng-repeat=\"member in vm.gym.members\" class=list-group-item>{{member.firstName + \' \' + member.lastName}} <a href ng-click=vm.deleteMembership(member) class=pull-right><img src=/client/images/cross.png></a></li></ul><ul class=\"col-md-6 list-group\"><li class=\"list-group-item active\">Employees</li><li ng-repeat=\"pendingEmployee in vm.gym.pendingEmployees\" class=list-group-item>{{pendingEmployee.firstName + \' \' + pendingEmployee.lastName}} (pending)<div class=pull-right><a href ng-click=vm.deleteEmployment(pendingEmployee)><img src=/client/images/cross.png></a> <a href ng-click=vm.acceptEmployment(pendingEmployee)><img src=/client/images/add.png></a></div></li><li ng-repeat=\"employee in vm.gym.employees\" class=list-group-item>{{employee.firstName + \' \' + employee.lastName}} <a href ng-click=vm.deleteEmployment(employee) class=pull-right><img src=/client/images/cross.png></a></li></ul></div>");}]);
+$templateCache.put("app/ownership/ownership.html","<div ng-show=!vm.gym class=container>You do not currently own a gym.<div class=well><form name=createGymForm class=form-horizontal><legend>New Gym Information</legend><div class=form-group><label for=gymName class=\"col-md-2 control-label\">Gym Name</label><div class=col-md-10><input name=gymName type=text placeholder=\"Gym Name\" ng-model=vm.gymName required class=form-control></div></div><div class=form-group><label for=gymMaxCapacity class=\"col-md-2 control-label\">Max Capacity</label><div class=col-md-10><input name=gymMaxCapacity type=text placeholder=\"Max Capacity\" ng-model=vm.gymMaxCapacity required class=form-control></div></div><div class=form-group><div class=\"col-md-10 col-md-offset-2\"><div class=pull-right><button ng-click=vm.createGym() ng-disabled=createGymForm.$invalid class=\"btn btn-primary\">Create</button> &nbsp;<a href=\"/\" class=\"btn btn-default\">Cancel</a></div></div></div></form></div></div><div ng-show=vm.gym class=container><h3 class=col-centered>{{vm.gym.name}}</h3><br><ul class=\"col-md-6 list-group\"><li class=\"list-group-item active\">Members</li><li ng-repeat=\"pendingMember in vm.gym.pendingMembers\" class=list-group-item>{{pendingMember.firstName + \' \' + pendingMember.lastName}} (pending)<div class=pull-right><a href ng-click=vm.deleteMembership(pendingMember)><img src=/client/images/cross.png></a> <a href ng-click=vm.acceptMembership(pendingMember)><img src=/client/images/add.png></a></div></li><li ng-repeat=\"member in vm.gym.members\" class=list-group-item>{{member.firstName + \' \' + member.lastName}} <a href ng-click=vm.deleteMembership(member) class=pull-right><img src=/client/images/cross.png></a></li></ul><ul class=\"col-md-6 list-group\"><li class=\"list-group-item active\">Employees</li><li ng-repeat=\"pendingEmployee in vm.gym.pendingEmployees\" class=list-group-item>{{pendingEmployee.firstName + \' \' + pendingEmployee.lastName}} (pending)<div class=pull-right><a href ng-click=vm.deleteEmployment(pendingEmployee)><img src=/client/images/cross.png></a> <a href ng-click=vm.acceptEmployment(pendingEmployee)><img src=/client/images/add.png></a></div></li><li ng-repeat=\"employee in vm.gym.employees\" class=list-group-item>{{employee.firstName + \' \' + employee.lastName}} <a href ng-click=vm.deleteEmployment(employee) class=pull-right><img src=/client/images/cross.png></a></li></ul></div>");}]);
