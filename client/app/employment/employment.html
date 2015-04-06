@@ -7,7 +7,7 @@
         <li class="list-group-item active">Possible Employment</li>
         <li ng-repeat="possibleEmployment in vm.possibleEmployments" class="list-group-item">
             {{possibleEmployment.name}}
-            <div class="user-action">
+            <div class="pull-right">
                 <a href="" ng-click="vm.requestEmployment(possibleEmployment)">
                     <img src="/client/images/add.png">
                 </a>
@@ -18,7 +18,7 @@
         <li class="list-group-item active">Pending Employment</li>
         <li ng-repeat="pendingEmployment in vm.pendingEmployments" class="list-group-item">
             {{pendingEmployment.name}}
-            <div class="user-action">
+            <div class="pull-right">
                 <a href="" ng-click="vm.deleteEmployment(pendingEmployment)">
                     <img src="/client/images/cross.png">
                 </a>
