@@ -210,6 +210,44 @@
 
 (function() {
     'use strict';
+    /* jshint ignore:start */
+    angular.module('app').value('toastr', toastr);
+    /* jshint ignore:end */
+
+    angular.module('app').factory('notifierService', ['toastr',
+        function(toastr) {
+            return {
+                success: function(message) {
+                    toastr.success(message);
+                },
+                error: function(message) {
+                    toastr.error(message);
+                }
+            };
+        }
+    ]);
+}());
+
+(function() {
+    'use strict';
+
+    var requestErrorService = function(notifierService, authService, $location) {
+        return {
+            handleSessionExpired: function() {
+                authService.logoutUser().then(function() {
+                    notifierService.error('Your session has expired');
+                    $location.path('/');
+                });
+            }
+        };
+    };
+
+    angular.module('app').factory('requestErrorService',
+        ['notifierService', 'authService', '$location', requestErrorService]);
+}());
+
+(function() {
+    'use strict';
 
     var generatePercentages = function() {
         var percentages = [];
@@ -313,44 +351,6 @@
     };
 
     angular.module('app').factory('dashboardService', ['$http', '$q', dashboardService]);
-}());
-
-(function() {
-    'use strict';
-    /* jshint ignore:start */
-    angular.module('app').value('toastr', toastr);
-    /* jshint ignore:end */
-
-    angular.module('app').factory('notifierService', ['toastr',
-        function(toastr) {
-            return {
-                success: function(message) {
-                    toastr.success(message);
-                },
-                error: function(message) {
-                    toastr.error(message);
-                }
-            };
-        }
-    ]);
-}());
-
-(function() {
-    'use strict';
-
-    var requestErrorService = function(notifierService, authService, $location) {
-        return {
-            handleSessionExpired: function() {
-                authService.logoutUser().then(function() {
-                    notifierService.error('Your session has expired');
-                    $location.path('/');
-                });
-            }
-        };
-    };
-
-    angular.module('app').factory('requestErrorService',
-        ['notifierService', 'authService', '$location', requestErrorService]);
 }());
 
 (function() {
