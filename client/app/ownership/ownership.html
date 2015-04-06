@@ -38,10 +38,10 @@
             {{pendingMember.firstName + ' ' + pendingMember.lastName}} (pending)
             <div class="pull-right">
                 <a href="" ng-click="vm.deleteMembership(pendingMember)">
-                    <img src="/client/images/cross.png">
+                    <img src="cross.png">
                 </a>
                 <a href="" ng-click="vm.acceptMembership(pendingMember)">
-                    <img src="/client/images/add.png">
+                    <img src="add.png">
                 </a>
             </div>
         </li>
@@ -49,7 +49,7 @@
         <li ng-repeat="member in vm.gym.members" class="list-group-item">
             {{member.firstName + ' ' + member.lastName}}
             <a href="" ng-click="vm.deleteMembership(member)" class="pull-right">
-                <img src="/client/images/cross.png">
+                <img src="cross.png">
             </a>
         </li>
     </ul>
@@ -59,10 +59,10 @@
             {{pendingEmployee.firstName + ' ' + pendingEmployee.lastName}} (pending)
             <div class="pull-right">
                 <a href="" ng-click="vm.deleteEmployment(pendingEmployee)">
-                    <img src="/client/images/cross.png">
+                    <img src="cross.png">
                 </a>
                 <a href="" ng-click="vm.acceptEmployment(pendingEmployee)">
-                    <img src="/client/images/add.png">
+                    <img src="add.png">
                 </a>
             </div>
         </li>
@@ -70,7 +70,7 @@
         <li ng-repeat="employee in vm.gym.employees" class="list-group-item">
             {{employee.firstName + ' ' + employee.lastName}}
             <a href="" ng-click="vm.deleteEmployment(employee)" class="pull-right">
-                <img src="/client/images/cross.png">
+                <img src="cross.png">
             </a>
         </li>
     </ul>

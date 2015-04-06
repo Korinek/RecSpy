@@ -9,7 +9,7 @@
             {{possibleEmployment.name}}
             <div class="pull-right">
                 <a href="" ng-click="vm.requestEmployment(possibleEmployment)">
-                    <img src="/client/images/add.png">
+                    <img src="add.png">
                 </a>
             </div>
         </li>
@@ -20,7 +20,7 @@
             {{pendingEmployment.name}}
             <div class="pull-right">
                 <a href="" ng-click="vm.deleteEmployment(pendingEmployment)">
-                    <img src="/client/images/cross.png">
+                    <img src="cross.png">
                 </a>
             </div>
         </li>
@@ -36,7 +36,7 @@
             {{checkedInMember.firstName + ' ' + checkedInMember.lastName}}
             <div class="pull-right">
                 <a href="" ng-click="vm.checkOutMember(checkedInMember)">
-                    <img src="/client/images/right_arrow.png">
+                    <img src="right_arrow.png">
                 </a>
             </div>
         </li>
@@ -46,7 +46,7 @@
         <li ng-repeat="checkedOutMember in vm.employment.checkedOutMembers" class="list-group-item">
             <div class="pull-left">
                 <a href="" ng-click="vm.checkInMember(checkedOutMember)">
-                    <img src="/client/images/left_arrow.png">
+                    <img src="left_arrow.png">
                 </a>
             </div>
             {{checkedOutMember.firstName + ' ' + checkedOutMember.lastName}}

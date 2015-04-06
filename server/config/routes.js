@@ -17,6 +17,7 @@ module.exports = function(app, config) {
     } else {
         console.log('*** DEVELOPMENT ***');
         app.use(express.static('./client/'));
+        app.use(express.static('./client/images/'));
         app.use(express.static('./'));
         app.use(express.static('./temp'));
     }
