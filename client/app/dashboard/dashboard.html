@@ -9,7 +9,7 @@
             <img src="right_arrow.png">
         </a>
         <h4>Best Time To Go: 7:30 PM</h4>
-        <h4>Currently Full</h4>
+        <h4>{{vm.fullnessMessage}}</h4>
         <div class="progress dashboard-progress-bar">
             <div ng-repeat="percentage in vm.percentages" ng-class="{'progress-bar': true, 'dashboard-progress-level': true, 'progress-bar-success': vm.currentPercentage <= 50, 'progress-bar-warning': vm.currentPercentage > 50 && vm.currentPercentage <= 80, 'progress-bar-danger': vm.currentPercentage > 80}" ng-show="percentage <= vm.currentPercentage">
             </div>

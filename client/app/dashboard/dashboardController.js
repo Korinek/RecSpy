@@ -9,6 +9,18 @@
         return percentages;
     };
 
+    var getGymFullnessMessage = function(percentage) {
+        if (percentage <= 50) {
+            return 'Not Busy';
+        } else if (percentage <= 70) {
+            return 'Somewhat Busy';
+        } else if (percentage <= 99) {
+            return 'Very Busy';
+        } else {
+            return 'Full';
+        }
+    };
+
     var setupPopulationWatches = function(socket, gyms) {
         gyms.forEach(function(gym) {
             console.log('Setting up socket on: ' + gym.name);
@@ -31,6 +43,7 @@
         vm.displayGymAtCurrentIndex = function() {
             vm.currentlyDisplayedGym = vm.memberships[vm.currentIndex];
             vm.currentPercentage = vm.currentlyDisplayedGym.currentPopulationPercentage;
+            vm.fullnessMessage = getGymFullnessMessage(vm.currentPercentage);
             console.log('--currentlyDisplayedGym--');
             console.log(vm.currentlyDisplayedGym);
             console.log('-------------------------');
@@ -59,7 +72,6 @@
         dashboardService.getGymStatistics().then(function(response) {
             if (response.success) {
                 vm.memberships = response.memberships;
-                console.log(vm.memberships);
                 setupPopulationWatches(socket, vm.memberships);
 
                 if (vm.memberships.length > 0) {
