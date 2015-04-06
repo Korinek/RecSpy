@@ -13,12 +13,17 @@ require('./server/config/sessions')(app);
 
 require('./server/config/models');
 
+var shouldSeed = true;
+if (shouldSeed) {
+    require('./server/seeds/seed')(); 
+}
+
 require('./server/config/passport')();
 
 require('./server/config/sockets').init(io);
 
 require('./server/config/routes')(app, config);
 
-server.listen(config.port, function () {
+server.listen(config.port, function() {
     console.log('Listening on port ' + config.port + '...');
 });
