@@ -26,7 +26,7 @@
         vm.currentPercentage = 0;
         vm.currentIndex = 0;
 
-        var socket = io.connect('http://localhost:3030');
+        var socket = io.connect();
 
         vm.displayGymAtCurrentIndex = function() {
             vm.currentlyDisplayedGym = vm.memberships[vm.currentIndex];
