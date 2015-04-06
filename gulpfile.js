@@ -121,6 +121,8 @@ gulp.task('optimize', ['inject', 'vet'], function() {
 
 gulp.task('build', ['optimize'], function() {
     log('Building everything');
+    return gulp.src(config.images)
+        .pipe(gulp.dest(config.build));
 });
 
 gulp.task('serve-build', ['optimize'], function() {

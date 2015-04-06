@@ -18,6 +18,7 @@ module.exports = function () {
         css: temp + 'site.css',
         html: clientApp + '**/*.html',
         htmltemplates: clientApp + '**/*.html',
+        images: client + 'images/*.png',
         index: client + 'index.html',
         js: [
             clientApp + 'app.js',
