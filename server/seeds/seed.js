@@ -21,10 +21,10 @@ function seedUsers() {
 function seedGyms() {
     for (var i = 1; i <= 10; i++) {
         User.findOne({
-            username: 'user' + i 
+            username: 'user' + i
         }, function(err, user) {
             var gymData = {
-                name: user.firstName + user.lastName +  '\'s Gym',
+                name: user.firstName + user.lastName + '\'s Gym',
                 owner: user,
                 maxCapacity: 100
             };
@@ -34,7 +34,24 @@ function seedGyms() {
     }
 }
 
-function seedMembers() {}
+function seedMembers() {
+    for (var i = 11; i <= 100; i++) {
+        User.findOne({
+            username: 'user' + i
+        }, function(err, user) {
+            for (var j = 1; j <= 10; j++) {
+
+                Gym.findOneAndUpdate({
+                    name: 'User' + j + '\'s Gym'
+                }, {
+                    $push: {
+                        pendingMembers: user._id
+                    }
+                }, function(err) {});
+            }
+        });
+    }
+}
 
 function seedEmployees() {}
 

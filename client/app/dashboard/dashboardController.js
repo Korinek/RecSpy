@@ -21,17 +21,7 @@
         }
     };
 
-    var setupPopulationWatches = function(socket, gyms) {
-        gyms.forEach(function(gym) {
-            console.log('Setting up socket on: ' + gym.name);
-            socket.on(gym.name, function(data) {
-                console.log(gym.name + ' pop percent changed to ' + data.currentPopulationPercentage);
-                gym.currentPopulationPercentage = data.currentPopulationPercentage;
-            });
-        });
-    };
-
-    var DashboardController = function(dashboardService, notifierService, requestErrorService) {
+    var DashboardController = function(dashboardService, notifierService, requestErrorService, $interval) {
         var vm = this;
         vm.memberships = [];
         vm.percentages = generatePercentages();
@@ -40,10 +30,28 @@
 
         var socket = io.connect();
 
+        var updateDisplayedData = function() {
+            if (vm.currentlyDisplayedGym) {
+                vm.currentPercentage = vm.currentlyDisplayedGym.currentPopulationPercentage;
+                vm.fullnessMessage = getGymFullnessMessage(vm.currentPercentage);
+                console.log(vm.currentlyDisplayedGym.name + ' percentage changed to ' + vm.currentPercentage);
+            }
+        };
+
+        $interval(updateDisplayedData, 5000);
+
+        var setupPopulationWatches = function(socket, gyms) {
+            gyms.forEach(function(gym) {
+                console.log('Setting up socket on: ' + gym.name);
+                socket.on(gym.name, function(data) {
+                    gym.currentPopulationPercentage = data.currentPopulationPercentage;
+                });
+            });
+        };
+
         vm.displayGymAtCurrentIndex = function() {
             vm.currentlyDisplayedGym = vm.memberships[vm.currentIndex];
-            vm.currentPercentage = vm.currentlyDisplayedGym.currentPopulationPercentage;
-            vm.fullnessMessage = getGymFullnessMessage(vm.currentPercentage);
+            updateDisplayedData();
             console.log('--currentlyDisplayedGym--');
             console.log(vm.currentlyDisplayedGym);
             console.log('-------------------------');
@@ -85,6 +93,6 @@
         });
     };
 
-    DashboardController.$inject = ['dashboardService', 'notifierService', 'requestErrorService'];
+    DashboardController.$inject = ['dashboardService', 'notifierService', 'requestErrorService', '$interval'];
     angular.module('app').controller('DashboardController', DashboardController);
 }());

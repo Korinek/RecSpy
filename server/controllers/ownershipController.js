@@ -7,7 +7,6 @@ var getRealName = function(userId, newUserList, next) {
     User.findOne({
         _id: userId
     }, function(err, user) {
-        console.log(user.firstName + ' ' + user.lastName);
 
         newUserList.push({
             _id: user._id,
@@ -52,22 +51,16 @@ exports.getOwnership = function(req, res, next) {
         //This needs refactored so bad, lol.
         convertUserIdListToNames(gym.employees, function(employees) {
             scrubbedGym.employees = employees;
-            console.log('finished employees');
 
             convertUserIdListToNames(gym.members, function(members) {
                 scrubbedGym.members = members;
-                console.log('finsihed members');
 
                 convertUserIdListToNames(gym.pendingMembers, function(pendingMembers) {
                     scrubbedGym.pendingMembers = pendingMembers;
-                    console.log('finished pending members');
-                    console.log(pendingMembers);
 
                     convertUserIdListToNames(gym.pendingEmployees, function(pendingEmployees) {
                         scrubbedGym.pendingEmployees = pendingEmployees;
-                        console.log('finished pending employees');
 
-                        console.log('--sending scrubbed gym--');
                         console.log(scrubbedGym);
                         res.send(scrubbedGym);
                     });
