@@ -3,6 +3,14 @@ var mongoose = require('mongoose'),
     Gym = mongoose.model('Gym'),
     encrypt = require('../utilities/encryption');
 
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min)) + min;
+}
+
+function addMinutes(date, minutes) {
+    return new Date(date.getTime() + minutes * 60000);
+}
+
 function seedUsers() {
     for (var i = 1; i <= 100; i++) {
         var userData = {
@@ -55,7 +63,46 @@ function seedMembers() {
 
 function seedEmployees() {}
 
-function seedSessions() {}
+function seedSessions() {
+    User.findOne({
+        firstName: 'Haddon'
+    }, function(err, user) {
+        var gymSessions = [];
+
+        var startHours = 7;
+        var endHours = 22;
+
+        for (var i = 0; i < 10000; i++) {
+            var randomDay = getRandomInt(0, 90); //last three months
+            var randomStartHour = getRandomInt(startHours, endHours);
+            var randomStartMinutes = getRandomInt(0, 60);
+            var startDateTime = new Date(new Date().setDate(new Date().getDate() - randomDay));
+            startDateTime.setHours(randomStartHour);
+            startDateTime.setMinutes(randomStartMinutes);
+
+            var sessionLengthMinutes = getRandomInt(15, 90);
+            var endDateTime = new Date(startDateTime);
+            endDateTime.setMinutes(startDateTime.getMinutes() + sessionLengthMinutes);
+
+            var session = {
+                checkIn: startDateTime,
+                checkOut: endDateTime,
+                userId: user._id
+            }; 
+            if(session.checkIn.toDateString() === new Date().toDateString()) {
+                console.log(session.checkIn);
+            }
+
+            gymSessions.push(session);
+        }
+
+        Gym.findOneAndUpdate({
+            name: 'Haddon\'s Gym'
+        }, {
+            sessions: gymSessions
+        }, function(err) {});
+    });
+}
 
 module.exports = function() {
     console.log('--SEEDING DATA--');
@@ -63,4 +110,5 @@ module.exports = function() {
     seedGyms();
     seedMembers();
     seedEmployees();
+    seedSessions();
 };
