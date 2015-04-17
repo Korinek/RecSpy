@@ -1,6 +1,18 @@
 (function() {
     'use strict';
 
+    var getHoursMinutes = function(date) {
+        var hours = date.getHours();
+        var minutes = date.getMinutes();
+        var amPm = 'AM';
+        if (hours > 12) {
+            hours = hours - 12;
+            amPm = 'PM';
+        }
+
+        return hours + ':' + minutes + ' ' + amPm;
+    };
+
     var generatePercentages = function() {
         var percentages = [];
         for (var i = 1; i <= 100; i++) {
@@ -38,11 +50,25 @@
             }
         };
 
+        var updateBestGymTimes = function() {
+            dashboardService.getBestGymTimes().then(function(response) {
+                if (response.success) {
+                    response.bestGymTimes.forEach(function(bestGymTime) {
+                        vm.memberships.forEach(function(gym) {
+                            if (gym._id === bestGymTime.gymId) {
+                                gym.bestTime = getHoursMinutes(new Date(bestGymTime.bestGymTime));
+                            }
+                        });
+                    });
+                }
+            });
+        };
+
         $interval(updateDisplayedData, 5000);
+        $interval(updateBestGymTimes, 5 * 60 * 1000); //5 minutes
 
         var setupPopulationWatches = function(socket, gyms) {
             gyms.forEach(function(gym) {
-                console.log('Setting up socket on: ' + gym.name);
                 socket.on(gym.name, function(data) {
                     gym.currentPopulationPercentage = data.currentPopulationPercentage;
                 });
@@ -80,6 +106,10 @@
         dashboardService.getGymStatistics().then(function(response) {
             if (response.success) {
                 vm.memberships = response.memberships;
+                vm.memberships.forEach(function(gym) {
+                    gym.bestTime = 'Unknown';
+                });
+                updateBestGymTimes();
                 setupPopulationWatches(socket, vm.memberships);
 
                 if (vm.memberships.length > 0) {

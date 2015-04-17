@@ -88,10 +88,10 @@ function seedSessions() {
                 checkIn: startDateTime,
                 checkOut: endDateTime,
                 userId: user._id
-            }; 
-            if(session.checkIn.toDateString() === new Date().toDateString()) {
+            };
+            /*if (session.checkIn.toDateString() === new Date().toDateString()) {
                 console.log(session.checkIn);
-            }
+            }*/
 
             gymSessions.push(session);
         }

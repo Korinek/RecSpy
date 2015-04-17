@@ -39,6 +39,7 @@ module.exports = function(app, config) {
     app.get('/api/employment', auth.requiresLogin, employmentController.getEmployment);
     app.get('/api/ownership', auth.requiresLogin, ownershipController.getOwnership);
     app.get('/api/memberships', auth.requiresLogin, membershipController.getMemberships);
+    app.get('/api/getBestGymTimes', auth.requiresLogin, dashboardController.getBestGymTimes);
 
     app.post('/logout', function(req, res) {
         req.logout();

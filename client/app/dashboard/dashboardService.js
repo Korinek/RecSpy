@@ -19,6 +19,23 @@
                     });
                 });
                 return deferred.promise;
+            },
+            getBestGymTimes: function() {
+                var deferred = $q.defer();
+                $http.get('/api/getBestGymTimes').then(function(response) {
+                    deferred.resolve({
+                        success: true,
+                        bestGymTimes: response.data.bestGymTimes
+                    });
+                }, function(error) {
+                    console.log(error);
+                    deferred.resolve({
+                        success: false,
+                        error: error.data.reason
+                    });
+                });
+
+                return deferred.promise;
             }
         };
     };

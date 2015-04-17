@@ -15,7 +15,7 @@ require('./server/config/models');
 
 var shouldSeed = true;
 if (shouldSeed) {
-    require('./server/seeds/seed')(); 
+    require('./server/seeds/seed')();
 }
 
 require('./server/config/passport')();
