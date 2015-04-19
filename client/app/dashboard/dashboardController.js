@@ -10,6 +10,10 @@
             amPm = 'PM';
         }
 
+        if (minutes < 10) {
+            return hours + ':0' + minutes + ' ' + amPm;
+        }
+
         return hours + ':' + minutes + ' ' + amPm;
     };
 
@@ -20,8 +24,19 @@
         }
         return percentages;
     };
+    
+    var convertTimeToDouble = function(time) {
+        return time.getHours() + time.getMinutes() / 100;
+    };
 
-    var getGymFullnessMessage = function(percentage) {
+    var getGymFullnessMessage = function(percentage, gym) {
+        var open = convertTimeToDouble(gym.openTime);
+        var close = convertTimeToDouble(gym.closeTime);
+        var now = convertTimeToDouble(new Date(Date.now()));
+        if (now < open || now > close) {
+            return 'Closed';
+        }
+
         if (percentage <= 50) {
             return 'Not Busy';
         } else if (percentage <= 70) {
@@ -45,7 +60,7 @@
         var updateDisplayedData = function() {
             if (vm.currentlyDisplayedGym) {
                 vm.currentPercentage = vm.currentlyDisplayedGym.currentPopulationPercentage;
-                vm.fullnessMessage = getGymFullnessMessage(vm.currentPercentage);
+                vm.fullnessMessage = getGymFullnessMessage(vm.currentPercentage, vm.currentlyDisplayedGym);
                 console.log(vm.currentlyDisplayedGym.name + ' percentage changed to ' + vm.currentPercentage);
             }
         };
@@ -108,6 +123,8 @@
                 vm.memberships = response.memberships;
                 vm.memberships.forEach(function(gym) {
                     gym.bestTime = 'Unknown';
+                    gym.openTime = new Date(gym.openTime);
+                    gym.closeTime = new Date(gym.closeTime);
                 });
                 updateBestGymTimes();
                 setupPopulationWatches(socket, vm.memberships);

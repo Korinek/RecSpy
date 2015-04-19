@@ -19,6 +19,21 @@
                 </div>
             </div>
             <div class="form-group">
+                <label for="gymOpenTime" class="col-md-2 control-label">Open Time</label>
+                <div class="col-md-10">
+                    <input name="gymOpenTime" type="time" ng-model="vm.gymOpenTime" required="required"
+                    class="form-control" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="gymCloseTime" class="col-md-2 control-label">Close Time</label>
+                <div class="col-md-10">
+                    <input name="gymCloseTime" type="time" ng-model="vm.gymCloseTime" required="required"
+                    class="form-control" />
+                </div>
+            </div>
+
+            <div class="form-group">
                 <div class="col-md-10 col-md-offset-2">
                     <div class="pull-right">
                         <button ng-click="vm.createGym()" ng-disabled="createGymForm.$invalid" class="btn btn-primary">Create</button>

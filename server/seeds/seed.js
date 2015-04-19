@@ -27,14 +27,26 @@ function seedUsers() {
 }
 
 function seedGyms() {
+    var openTime = new Date();
+    openTime.setHours(7);
+
+    var closeTime = new Date();
+    closeTime.setHours(22);
+    
     for (var i = 1; i <= 10; i++) {
         User.findOne({
             username: 'user' + i
         }, function(err, user) {
+            if (err) {
+                console.log(err);
+            }
+
             var gymData = {
                 name: user.firstName + user.lastName + '\'s Gym',
                 owner: user,
-                maxCapacity: 100
+                maxCapacity: 100,
+                openTime: openTime,
+                closeTime: closeTime
             };
 
             Gym.create(gymData);
@@ -70,10 +82,11 @@ function seedSessions() {
         var gymSessions = [];
 
         var startHours = 7;
-        var endHours = 22;
+        var endHours = 23;
 
-        for (var i = 0; i < 10000; i++) {
-            var randomDay = getRandomInt(0, 90); //last three months
+        for (var i = 0; i < 1000; i++) {
+            //var randomDay = getRandomInt(0, 90); //last three months
+            var randomDay = 7;
             var randomStartHour = getRandomInt(startHours, endHours);
             var randomStartMinutes = getRandomInt(0, 60);
             var startDateTime = new Date(new Date().setDate(new Date().getDate() - randomDay));
@@ -92,7 +105,6 @@ function seedSessions() {
             /*if (session.checkIn.toDateString() === new Date().toDateString()) {
                 console.log(session.checkIn);
             }*/
-
             gymSessions.push(session);
         }
 

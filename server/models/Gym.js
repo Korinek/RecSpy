@@ -47,15 +47,26 @@ var gymSchema = mongoose.Schema({
         required: false,
         unique: false
     },
-    sessions: [{
+    /*sessions: [{
         userId: mongoose.Schema.Types.ObjectId,
         checkIn: Date,
         checkOut: Date
-    }],
+    }],*/
+    sessions: {
+        type: Array
+    },
     maxCapacity: {
         type: Number,
         required: true,
         min: 0
+    },
+    openTime: {
+        type: Date,
+        required: true
+    },
+    closeTime: {
+        type: Date,
+        required: true
     }
 });
 

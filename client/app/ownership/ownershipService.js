@@ -20,11 +20,13 @@
                 });
                 return deferred.promise;
             },
-            createGym: function(gymName, gymMaxCapacity) {
+            createGym: function(gymName, gymMaxCapacity, gymOpenTime, gymCloseTime) {
                 var deferred = $q.defer();
                 $http.post('/api/ownership', {
                         gymName: gymName,
-                        maxCapacity: gymMaxCapacity
+                        maxCapacity: gymMaxCapacity,
+                        openTime: gymOpenTime,
+                        closeTime: gymCloseTime
                     })
                     .then(function(response) {
                         deferred.resolve({

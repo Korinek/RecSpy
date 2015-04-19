@@ -10,6 +10,9 @@
 
     var OwnershipController = function(ownershipService, requestErrorService, notifierService) {
         var vm = this;
+        vm.openTime = new Date();
+        vm.closeTime = new Date();
+
         ownershipService.getOwnedGym().then(function(response) {
             if (response.success) {
                 vm.gym = response.gym;
@@ -19,13 +22,14 @@
         });
 
         vm.createGym = function() {
-            ownershipService.createGym(vm.gymName, vm.gymMaxCapacity).then(function(response) {
-                if (response.success) {
-                    vm.gym = response.gym;
-                } else {
-                    notifierService.error(response.error);
-                }
-            });
+            ownershipService.createGym(vm.gymName, vm.gymMaxCapacity, vm.gymOpenTime, vm.gymCloseTime)
+                .then(function(response) {
+                    if (response.success) {
+                        vm.gym = response.gym;
+                    } else {
+                        notifierService.error(response.error);
+                    }
+                });
         };
 
         vm.deleteMembership = function(member) {
