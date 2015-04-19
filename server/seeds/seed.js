@@ -32,7 +32,7 @@ function seedGyms() {
 
     var closeTime = new Date();
     closeTime.setHours(22);
-    
+
     for (var i = 1; i <= 10; i++) {
         User.findOne({
             username: 'user' + i

@@ -22,7 +22,6 @@ var getActiveSessions = function(sessions, time) {
     endInterval.setMinutes(endInterval.getMinutes() + 5);
     endInterval = timeToDouble(endInterval);
 
-
     var payload = [];
     sessions.forEach(function(session) {
         var checkIn = timeToDouble(session.checkIn);
@@ -67,7 +66,7 @@ var calculateBestTime = function(gym) {
             sessionsToConsider.push(session);
         }
     });
-    
+
     //if the gym is closed, return bogus value
     if (timeToDouble(now) > gymClose) {
         return now;
@@ -82,17 +81,17 @@ var calculateBestTime = function(gym) {
     console.log(sessionsToConsider);
     console.log('----------' + sessionsToConsider.length + '--------------');
 
-    while(timeToDouble(now) < gymClose) {
-        var activeSessions = getActiveSessions(sessionsToConsider, now); 
+    while (timeToDouble(now) < gymClose) {
+        var activeSessions = getActiveSessions(sessionsToConsider, now);
         if (activeSessions.length < bestCount) {
             bestCount = activeSessions.length;
             bestTime = now;
         }
 
         now.setMinutes(now.getMinutes() + 5);
-    };
+    }
 
-   return now; 
+    return now;
 };
 
 exports.getGymStatistics = function(req, res, next) {

@@ -22,9 +22,10 @@
         for (var i = 1; i <= 100; i++) {
             percentages.push(i);
         }
+
         return percentages;
     };
-    
+
     var convertTimeToDouble = function(time) {
         return time.getHours() + time.getMinutes() / 100;
     };
