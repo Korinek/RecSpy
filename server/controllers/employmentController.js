@@ -234,20 +234,20 @@ exports.checkInMember = function(req, res, next) {
             remove(gym.checkedOutMembers, memberToCheckIn);
             gym.checkedInMembers.push(memberToCheckIn);
 
-            var gymSession = {
+           /* var gymSession = {
                 userId: memberToCheckIn,
                 checkIn: Date.now(),
                 checkOut: null
             };
 
-            gym.sessions.push(gymSession);
+            gym.sessions.push(gymSession);*/
 
             Gym.update({
                 _id: gym._id
             }, {
                 checkedOutMembers: gym.checkedOutMembers,
-                checkedInMembers: gym.checkedInMembers,
-                sessions: gym.sessions
+                checkedInMembers: gym.checkedInMembers/*,
+                sessions: gym.sessions*/
             }, function(err) {
                 if (err) {
                     sendError(res, err);
@@ -278,21 +278,21 @@ exports.checkOutMember = function(req, res, next) {
             remove(gym.checkedInMembers, memberToCheckOut);
             gym.checkedOutMembers.push(memberToCheckOut);
 
-            var currentSession;
+            /*var currentSession;
             gym.sessions.forEach(function(session) {
-                if (session.userId.equals(memberToCheckOut) && !session.checkOut) {
+                if (session.userId === memberToCheckOut && !session.checkOut) {
                     currentSession = session;
                 }
             });
 
-            currentSession.checkOut = Date.now();
+            currentSession.checkOut = Date.now();*/
 
             Gym.update({
                 _id: gym._id
             }, {
                 checkedOutMembers: gym.checkedOutMembers,
-                checkedInMembers: gym.checkedInMembers,
-                sessions: gym.sessions
+                checkedInMembers: gym.checkedInMembers/*,
+                sessions: gym.sessions*/
             }, function(err) {
                 if (err) {
                     sendError(res, err);

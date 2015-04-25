@@ -1,9 +1,13 @@
 <div class="container">
-    <ul class="list-group col-centered col-md-6">
+    <div class="col-md-3 col-centered">
+        <input placeholder="Gym Name" ng-model="search.name">
+    </div>
+    </br>
+    <ul class="list-group col-centered col-md-3">
         <li class="list-group-item active">
             Gyms
         </li>
-        <li ng-repeat="gym in vm.gyms" class="list-group-item">
+        <li ng-repeat="gym in vm.gyms | filter:search:strict" class="list-group-item left-align">
             {{gym.name}}
             <div class="pull-right">
                 <a href="" ng-show="!gym.isCurrentUserMember && !gym.isCurrentUserPendingMember"
